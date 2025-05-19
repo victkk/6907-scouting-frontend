@@ -1,0 +1,43 @@
+{
+  "event": "CNSH",
+  "matchCode": "q16",
+  "teamNo": 6907,
+  "autoStartPosition":"A",
+  "action":[
+    {
+        "type": "start",
+        "timestamp": 
+    },
+    {
+        "type": "intake coral",
+        "intake coral type":"load station A",
+        "timestamp": 
+    },
+    {
+        "type": "intake algae",
+        "intake algae type":"ground",
+        "timestamp": 
+    },
+    {
+        "type": "score coral",
+        "score coral type":"L1",
+        "success":false,
+        "timestamp": 
+    },
+    {
+        "type": "score algae",
+        "score algae type":"processor",
+        "success":true,
+        "timestamp": 
+    },
+    {
+        "type": "go barge",
+        "timestamp": 
+    },
+    {
+        "type": "climb up",
+        "timestamp": 
+    },
+
+  ]
+}
