@@ -2,9 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/scout_state_provider.dart';
 import '../../../models/scout_state.dart';
+import '../../../theme/app_theme.dart';
 
-class TimerDisplay extends StatelessWidget {
+class TimerDisplay extends StatefulWidget {
   const TimerDisplay({super.key});
+
+  @override
+  State<TimerDisplay> createState() => _TimerDisplayState();
+}
+
+class _TimerDisplayState extends State<TimerDisplay>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+    _pulseAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.1,
+    ).animate(CurvedAnimation(
+      parent: _pulseController,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +47,11 @@ class TimerDisplay extends StatelessWidget {
 
         // 根据不同阶段显示不同的信息
         String displayText = '';
-        Color textColor = Colors.white;
+        String phaseText = '';
+        Color primaryColor = AppTheme.primaryColor;
+        Color backgroundColor = AppTheme.surfaceSecondary;
+        IconData phaseIcon = Icons.timer;
+        bool shouldPulse = false;
 
         switch (currentPhase) {
           case GamePhase.notStarted:
@@ -25,40 +61,51 @@ class TimerDisplay extends StatelessWidget {
             if (remainingTime > 0) {
               final minutes = (remainingTime / 60).floor();
               final seconds = remainingTime % 60;
-              final timeString =
-                  '$minutes:${seconds.toString().padLeft(2, '0')}';
-              displayText = '自动阶段: $timeString';
-              textColor = Colors.green;
+              displayText = '$minutes:${seconds.toString().padLeft(2, '0')}';
+              phaseText = '自动阶段';
+              primaryColor = AppTheme.successColor;
+              phaseIcon = Icons.smart_toy;
             }
             break;
 
           case GamePhase.waitingTeleop:
-            displayText = '等待手动阶段开始...';
-            textColor = Colors.orange;
+            displayText = '等待中';
+            phaseText = '准备手动阶段';
+            primaryColor = AppTheme.warningColor;
+            backgroundColor = AppTheme.warningColor.withOpacity(0.1);
+            phaseIcon = Icons.pause_circle_outline;
+            shouldPulse = true;
             break;
 
           case GamePhase.teleop:
             if (remainingTime > 0) {
               final minutes = (remainingTime / 60).floor();
               final seconds = remainingTime % 60;
-              final timeString =
-                  '$minutes:${seconds.toString().padLeft(2, '0')}';
-              displayText = '手动阶段: $timeString';
+              displayText = '$minutes:${seconds.toString().padLeft(2, '0')}';
+              phaseText = '手动阶段';
+              phaseIcon = Icons.gamepad;
 
-              // 根据剩余时间改变颜色
+              // 根据剩余时间改变颜色和效果
               if (remainingTime < 30) {
-                textColor = Colors.red;
+                primaryColor = AppTheme.errorColor;
+                backgroundColor = AppTheme.errorColor.withOpacity(0.1);
+                shouldPulse = true;
               } else if (remainingTime < 60) {
-                textColor = Colors.orange;
+                primaryColor = AppTheme.warningColor;
+                backgroundColor = AppTheme.warningColor.withOpacity(0.1);
               } else {
-                textColor = Colors.blue;
+                primaryColor = AppTheme.infoColor;
+                backgroundColor = AppTheme.infoColor.withOpacity(0.1);
               }
             }
             break;
 
           case GamePhase.finished:
-            displayText = '比赛结束';
-            textColor = Colors.grey;
+            displayText = '已结束';
+            phaseText = '比赛完成';
+            primaryColor = AppTheme.textDisabled;
+            backgroundColor = AppTheme.textDisabled.withOpacity(0.1);
+            phaseIcon = Icons.flag;
             break;
         }
 
@@ -66,20 +113,96 @@ class TimerDisplay extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.black54,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            displayText,
-            style: TextStyle(
-              color: textColor,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
+        // 控制脉冲动画
+        if (shouldPulse && !_pulseController.isAnimating) {
+          _pulseController.repeat(reverse: true);
+        } else if (!shouldPulse && _pulseController.isAnimating) {
+          _pulseController.stop();
+          _pulseController.reset();
+        }
+
+        return AnimatedBuilder(
+          animation: _pulseAnimation,
+          builder: (context, child) {
+            return Transform.scale(
+              scale: shouldPulse ? _pulseAnimation.value : 1.0,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      backgroundColor,
+                      backgroundColor.withOpacity(0.5),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: primaryColor.withOpacity(0.3),
+                    width: 2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: primaryColor.withOpacity(0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 阶段图标
+                    Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: primaryColor.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        phaseIcon,
+                        color: primaryColor,
+                        size: 18,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+
+                    // 时间和阶段信息
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // 阶段名称
+                        Text(
+                          phaseText,
+                          style: TextStyle(
+                            color: AppTheme.textSecondary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+
+                        // 时间显示
+                        Text(
+                          displayText,
+                          style: TextStyle(
+                            color: primaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );
