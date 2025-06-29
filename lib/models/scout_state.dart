@@ -110,22 +110,6 @@ class AppState {
       matchCode: matchCode,
       teamNo: teamNo,
     );
-
-    // 添加start动作到matchRecord中
-    final startAction = ScoutingAction.start();
-    matchRecord.addAction(startAction);
-
-    // 设置游戏开始状态
-    isStarted = true;
-    currentPhase = GamePhase.autonomous;
-    _timerStartTimestamp = DateTime.now().millisecondsSinceEpoch;
-    _autonomousEndTimestamp = _timerStartTimestamp! + 15000; // 15秒后结束自动阶段
-
-    // 设置自动阶段结束的计时器
-    _saveTimer?.cancel();
-    _saveTimer = Timer(const Duration(seconds: 15), () {
-      currentPhase = GamePhase.waitingTeleop;
-    });
   }
 
   // 保存记录到本地文件
@@ -289,6 +273,10 @@ class AppState {
 
     switch (buttonId) {
       case 'Start':
+        // 添加start动作到matchRecord中
+        final startAction = ScoutingAction.start(timestamp: relativeTimestamp);
+        matchRecord.addAction(startAction);
+
         isStarted = true;
         _checkFirstAction();
         break;
