@@ -13,7 +13,7 @@ class HexagonalButtonGroup extends StatelessWidget {
   final double childPositionFactor;
 
   const HexagonalButtonGroup({
-    Key? key,
+    super.key,
     required this.size,
     required this.onPressed,
     required this.colors,
@@ -25,8 +25,7 @@ class HexagonalButtonGroup extends StatelessWidget {
         assert(colors.length == 6),
         assert(children.length == 6),
         assert(borderColors.length == 6),
-        assert(childPositionFactor >= 0 && childPositionFactor <= 1),
-        super(key: key);
+        assert(childPositionFactor >= 0 && childPositionFactor <= 1);
 
   @override
   Widget build(BuildContext context) {

@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'hexagon_button.dart';
 
 class CenterImage extends StatelessWidget {
-  const CenterImage({Key? key}) : super(key: key);
+  const CenterImage({super.key});
 
   // 定义图片的长宽比 - 根据实际图片调整这些值
   static const double offenseImageAspectRatio = 1291.0 / 1110; // 示例值
@@ -240,15 +240,17 @@ class CenterImage extends StatelessWidget {
               () => selectFace(5),
               () => selectFace(6),
             ],
-            colors: [
-              const Color.fromARGB(255, 25, 118, 210),
-              const Color.fromARGB(255, 25, 118, 210),
-              const Color.fromARGB(255, 25, 118, 210),
-              const Color.fromARGB(255, 25, 118, 210),
-              const Color.fromARGB(255, 25, 118, 210),
-              const Color.fromARGB(255, 25, 118, 210),
+            colors: const [
+              Color.fromARGB(255, 25, 118, 210),
+              Color.fromARGB(255, 25, 118, 210),
+              Color.fromARGB(255, 25, 118, 210),
+              Color.fromARGB(255, 25, 118, 210),
+              Color.fromARGB(255, 25, 118, 210),
+              Color.fromARGB(255, 25, 118, 210),
             ],
             borderColors: List.filled(6, Colors.white),
+            childPositionFactor: 0.6, // 控制图标位置靠近外边缘
+            borderWidth: 2.0,
             children: [
               Icon(Icons.home, color: Colors.white),
               Icon(Icons.search, color: Colors.white),
@@ -257,8 +259,6 @@ class CenterImage extends StatelessWidget {
               Icon(Icons.person, color: Colors.white),
               Icon(Icons.notifications, color: Colors.white),
             ],
-            childPositionFactor: 0.6, // 控制图标位置靠近外边缘
-            borderWidth: 2.0,
           )),
     ];
   }

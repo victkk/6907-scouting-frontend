@@ -9,14 +9,14 @@ class TriangularButton extends StatelessWidget {
   final double borderWidth;
 
   const TriangularButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     this.color = Colors.blue,
     this.child,
     this.size = 100,
     this.borderColor,
     this.borderWidth = 1.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

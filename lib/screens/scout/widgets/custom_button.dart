@@ -16,7 +16,7 @@ class CustomButton extends StatelessWidget {
   final bool isEnabled;
 
   const CustomButton({
-    Key? key,
+    super.key,
     required this.id,
     required this.label,
     this.icon,
@@ -28,7 +28,7 @@ class CustomButton extends StatelessWidget {
     this.width,
     this.height,
     this.isEnabled = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +61,7 @@ class CustomButton extends StatelessWidget {
           // mainAxisSize: MainAxisSize.max,
           children: [
             if (icon != null) Icon(icon),
-            if (icon != null) SizedBox(width: 8),
+            if (icon != null) const SizedBox(width: 8),
             Text(label),
           ],
         ),

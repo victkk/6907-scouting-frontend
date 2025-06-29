@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 class SidePanel extends StatelessWidget {
   final bool isLeftPanel;
 
-  const SidePanel({Key? key, required this.isLeftPanel}) : super(key: key);
+  const SidePanel({super.key, required this.isLeftPanel});
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +18,12 @@ class SidePanel extends StatelessWidget {
       final availableWidth = constraints.maxWidth;
       final availableHeight = constraints.maxHeight;
       return Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.blueGrey[900],
         ),
         child: !appState.isStarted
-            ? Column(
+            ? const Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [],
               )
@@ -54,7 +54,7 @@ class SidePanel extends StatelessWidget {
                 icon: Icons.add_circle,
                 height: availableHeight * 0.54,
                 backgroundColor: Colors.blue[800]),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             CustomButton(
               id: 'Go Barge',
               label: 'Go Barge',
@@ -62,7 +62,7 @@ class SidePanel extends StatelessWidget {
               icon: Icons.remove_circle,
               backgroundColor: Colors.blue[800],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             CustomButton(
               id: 'Climb Up',
               label: 'Climb Up',

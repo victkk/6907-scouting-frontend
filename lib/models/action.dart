@@ -87,69 +87,76 @@ class ScoutingAction {
   }
 
   /// 工厂方法 - 创建开始动作
-  static ScoutingAction start() {
+  static ScoutingAction start({int? timestamp}) {
     return ScoutingAction(
-        type: 'start', timestamp: DateTime.now().millisecondsSinceEpoch);
+        type: 'start',
+        timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch);
   }
 
-  static ScoutingAction defense() {
+  static ScoutingAction defense({int? timestamp}) {
     return ScoutingAction(
-        type: 'defense', timestamp: DateTime.now().millisecondsSinceEpoch);
+        type: 'defense',
+        timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch);
   }
 
-  static ScoutingAction foul() {
+  static ScoutingAction foul({int? timestamp}) {
     return ScoutingAction(
-        type: 'foul', timestamp: DateTime.now().millisecondsSinceEpoch);
+        type: 'foul',
+        timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch);
   }
 
   /// 工厂方法 - 创建摄取珊瑚动作
-  static ScoutingAction intakeCoral(String type) {
+  static ScoutingAction intakeCoral(String type, {int? timestamp}) {
     return ScoutingAction(
       type: 'intake coral',
-      timestamp: DateTime.now().millisecondsSinceEpoch,
+      timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch,
       intakeCoralType: type,
     );
   }
 
   /// 工厂方法 - 创建摄取藻类动作
-  static ScoutingAction intakeAlgae(String type) {
+  static ScoutingAction intakeAlgae(String type, {int? timestamp}) {
     return ScoutingAction(
       type: 'intake algae',
-      timestamp: DateTime.now().millisecondsSinceEpoch,
+      timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch,
       intakeAlgaeType: type,
     );
   }
 
   /// 工厂方法 - 创建得分珊瑚动作
-  static ScoutingAction scoreCoral(String type, int face, bool success) {
+  static ScoutingAction scoreCoral(String type, int face, bool success,
+      {int? timestamp}) {
     return ScoutingAction(
       type: 'score coral',
       face: face,
-      timestamp: DateTime.now().millisecondsSinceEpoch,
+      timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch,
       scoreCoralType: type,
       success: success,
     );
   }
 
   /// 工厂方法 - 创建得分藻类动作
-  static ScoutingAction scoreAlgae(String type, bool success) {
+  static ScoutingAction scoreAlgae(String type, bool success,
+      {int? timestamp}) {
     return ScoutingAction(
       type: 'score algae',
-      timestamp: DateTime.now().millisecondsSinceEpoch,
+      timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch,
       scoreAlgaeType: type,
       success: success,
     );
   }
 
   /// 工厂方法 - 创建前往驳船动作
-  static ScoutingAction goBarge() {
+  static ScoutingAction goBarge({int? timestamp}) {
     return ScoutingAction(
-        type: 'go barge', timestamp: DateTime.now().millisecondsSinceEpoch);
+        type: 'go barge',
+        timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch);
   }
 
   /// 工厂方法 - 创建爬升动作
-  static ScoutingAction climbUp() {
+  static ScoutingAction climbUp({int? timestamp}) {
     return ScoutingAction(
-        type: 'climb up', timestamp: DateTime.now().millisecondsSinceEpoch);
+        type: 'climb up',
+        timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch);
   }
 }
