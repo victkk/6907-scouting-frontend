@@ -14,7 +14,8 @@ class CenterImage extends StatelessWidget {
   static const double hexgon_button_size = 0.1;
   @override
   Widget build(BuildContext context) {
-    final appState = Provider.of<AppStateProvider>(context).appState;
+    final appStateProvider = Provider.of<AppStateProvider>(context);
+    final appState = appStateProvider.appState;
 
     // 根据模式选择不同的图片
     final String imagePath = appState.getIsDefensing()
@@ -27,8 +28,8 @@ class CenterImage extends StatelessWidget {
         : offenseImageAspectRatio;
     final Map<String, List<Widget> Function(double, double)>
         modeButtonBuilders = {
-      'offense': (width, height) =>
-          _buildMode1Buttons(width, height, appState.selectFace, appState),
+      'offense': (width, height) => _buildMode1Buttons(
+          width, height, appStateProvider.selectFace, appState),
       'defense': (width, height) => _buildMode2Buttons(width, height),
       'auto': (width, height) => _buildAutoSelectButtons(width, height),
       'start': (width, height) => _buildStartButtons(width, height),

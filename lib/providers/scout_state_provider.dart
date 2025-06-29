@@ -61,6 +61,14 @@ class AppStateProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // 添加专门的face选择方法，优化性能
+  void selectFace(int face) {
+    if (_appState.faceSelected != face) {
+      _appState.selectFace(face);
+      notifyListeners();
+    }
+  }
+
   void deleteAction(int index) {
     _appState.deleteAction(index);
     notifyListeners();

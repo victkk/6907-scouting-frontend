@@ -98,7 +98,8 @@ class _CustomButtonState extends State<CustomButton>
       builder: (context, child) {
         return Transform.scale(
           scale: _scaleAnimation.value,
-          child: Container(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 100), // 加快状态变化响应
             width: widget.width,
             height: widget.height,
             decoration: BoxDecoration(
@@ -126,7 +127,8 @@ class _CustomButtonState extends State<CustomButton>
             ),
             child: Material(
               color: Colors.transparent,
-              child: Container(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 80), // 更快的颜色变化
                 decoration: BoxDecoration(
                   gradient: widget.useGradient && widget.isEnabled
                       ? LinearGradient(

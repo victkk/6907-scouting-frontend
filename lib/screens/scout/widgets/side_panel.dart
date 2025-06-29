@@ -273,16 +273,19 @@ class SidePanel extends StatelessWidget {
       AppTheme.successColor, // L1 - 绿色，最低级别
     ];
 
+    // 提前计算isEnabled，避免在每个按钮中重复计算
+    final isEnabled = appState.hasCoral && (appState.faceSelected > -1);
+
     return levels.asMap().entries.map((entry) {
       final index = entry.key;
       final level = entry.value;
-      final isEnabled = appState.hasCoral && (appState.faceSelected > -1);
 
       return Expanded(
         child: Padding(
           padding:
               EdgeInsets.only(bottom: index == levels.length - 1 ? 0 : 8.0),
           child: CustomButton(
+            key: ValueKey('${level}_$isEnabled'), // 添加key提高重建效率
             id: level,
             label: level,
             backgroundColor: colors[index],
