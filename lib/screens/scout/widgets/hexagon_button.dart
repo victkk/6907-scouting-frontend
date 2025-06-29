@@ -6,26 +6,27 @@ import 'dart:math' as math;
 class HexagonalButtonGroup extends StatelessWidget {
   final double size;
   final List<VoidCallback> onPressed;
-  final List<Color> colors;
   final List<Widget?> children;
-  final List<Color?> borderColors;
   final double borderWidth;
   final double childPositionFactor;
+  final int selectedIndex; // 当前选中的索引 (1-6, 0表示未选中)
+  final Color selectedColor; // 选中时的颜色
+  final Color unselectedColor; // 未选中时的颜色
 
   const HexagonalButtonGroup({
     super.key,
     required this.size,
     required this.onPressed,
-    required this.colors,
     this.children = const [null, null, null, null, null, null],
-    this.borderColors = const [null, null, null, null, null, null],
-    this.borderWidth = 1.0,
+    this.borderWidth = 2.0,
     this.childPositionFactor = 0.5,
+    this.selectedIndex = 0, // 默认未选中
+    this.selectedColor = const Color.fromARGB(255, 25, 118, 210), // 默认蓝色
+    this.unselectedColor = const Color.fromARGB(255, 120, 120, 120), // 默认灰色
   })  : assert(onPressed.length == 6),
-        assert(colors.length == 6),
         assert(children.length == 6),
-        assert(borderColors.length == 6),
-        assert(childPositionFactor >= 0 && childPositionFactor <= 1);
+        assert(childPositionFactor >= 0 && childPositionFactor <= 1),
+        assert(selectedIndex >= 0 && selectedIndex <= 6);
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +41,12 @@ class HexagonalButtonGroup extends StatelessWidget {
     // 计算这个三角形的中心角度
     final sectionAngle = (index * 60 + 60) * (math.pi / 180); // 转换为弧度
 
+    // 动态计算颜色：如果当前索引+1等于selectedIndex，则使用选中颜色，否则使用未选中颜色
+    final isSelected = (index + 1) == selectedIndex;
+    final buttonColor = isSelected ? selectedColor : unselectedColor;
+    final borderColor =
+        isSelected ? selectedColor : unselectedColor.withOpacity(0.5);
+
     return Positioned.fill(
       child: Stack(
         children: [
@@ -49,38 +56,68 @@ class HexagonalButtonGroup extends StatelessWidget {
               sectionIndex: index,
               sections: 6,
             ),
-            child: Material(
-              color: colors[index],
-              child: InkWell(
-                onTap: onPressed[index],
-                // containedInkWell: true,
-                // highlightShape: BoxShape.rectangle,
-                child: Container(),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              decoration: BoxDecoration(
+                gradient: isSelected
+                    ? LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          buttonColor,
+                          buttonColor.withOpacity(0.7),
+                        ],
+                      )
+                    : null,
+                color: isSelected ? null : buttonColor,
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: buttonColor.withOpacity(0.6),
+                          blurRadius: 12,
+                          spreadRadius: 3,
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onPressed[index],
+                  child: Container(),
+                ),
               ),
             ),
           ),
 
-          // 边框
-          // if (borderColors[index] != null)
-          //   CustomPaint(
-          //     painter: TriangularSectionBorderPainter(
-          //       sectionIndex: index,
-          //       sections: 6,
-          //       color: borderColors[index]!,
-          //       strokeWidth: borderWidth,
-          //     ),
-          //     size: Size(size, size),
-          //   ),
+          // 边框 - 为选中的部分添加明显边框
+          if (isSelected)
+            ClipPath(
+              clipper: TriangularSectionClipper(
+                sectionIndex: index,
+                sections: 6,
+              ),
+              child: CustomPaint(
+                painter: TriangularSectionBorderPainter(
+                  sectionIndex: index,
+                  sections: 6,
+                  color: borderColor,
+                  strokeWidth: borderWidth,
+                ),
+                size: Size(size, size),
+              ),
+            ),
 
-          // 子组件
-          // if (children[index] != null)
-          //   _buildPositionedChild(sectionAngle, children[index]!),
+          // 子组件 (图标等)
+          if (children[index] != null)
+            _buildPositionedChild(sectionAngle, children[index]!, isSelected),
         ],
       ),
     );
   }
 
-  Widget _buildPositionedChild(double sectionAngle, Widget child) {
+  Widget _buildPositionedChild(
+      double sectionAngle, Widget child, bool isSelected) {
     // 计算子组件的位置
     final distance = size * 0.5 * childPositionFactor;
     final childX = size / 2 + math.cos(sectionAngle) * distance;
@@ -95,7 +132,25 @@ class HexagonalButtonGroup extends StatelessWidget {
         delegate: FixedPositionDelegate(
           Offset(childX / size, childY / size),
         ),
-        child: child,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          child: child is Icon
+              ? Icon(
+                  child.icon,
+                  color: isSelected ? Colors.white : Colors.grey[600],
+                  size: child.size ?? 20,
+                  shadows: isSelected
+                      ? [
+                          Shadow(
+                            color: Colors.black.withOpacity(0.5),
+                            blurRadius: 4,
+                            offset: const Offset(1, 1),
+                          ),
+                        ]
+                      : null,
+                )
+              : child,
+        ),
       ),
     );
   }

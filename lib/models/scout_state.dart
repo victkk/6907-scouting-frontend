@@ -17,7 +17,7 @@ enum GamePhase {
 
 class AppState {
   // 示例状态值，根据实际需求可以增减
-  int faceSelected = -1;
+  int faceSelected = 0;
   bool isDefensing = false;
   bool hasCoral = true;
   bool hasAlgae = false;
@@ -85,7 +85,7 @@ class AppState {
   }
 
   void unselectFace() {
-    faceSelected = -1;
+    faceSelected = 0;
   }
 
   void deleteAction(int index) {

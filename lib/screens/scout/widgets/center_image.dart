@@ -233,6 +233,9 @@ class CenterImage extends StatelessWidget {
           height: width * 0.35,
           child: HexagonalButtonGroup(
             size: width * 0.3,
+            selectedIndex: appState.faceSelected, // 传递当前选中的face
+            selectedColor: const Color.fromARGB(255, 255, 152, 0), // 橙色高亮
+            unselectedColor: const Color.fromARGB(255, 120, 120, 120), // 灰色
             onPressed: [
               () => selectFace(1),
               () => selectFace(2),
@@ -241,24 +244,15 @@ class CenterImage extends StatelessWidget {
               () => selectFace(5),
               () => selectFace(6),
             ],
-            colors: const [
-              Color.fromARGB(255, 25, 118, 210),
-              Color.fromARGB(255, 25, 118, 210),
-              Color.fromARGB(255, 25, 118, 210),
-              Color.fromARGB(255, 25, 118, 210),
-              Color.fromARGB(255, 25, 118, 210),
-              Color.fromARGB(255, 25, 118, 210),
-            ],
-            borderColors: List.filled(6, Colors.white),
             childPositionFactor: 0.6, // 控制图标位置靠近外边缘
-            borderWidth: 2.0,
-            children: [
-              Icon(Icons.home, color: Colors.white),
-              Icon(Icons.search, color: Colors.white),
-              Icon(Icons.settings, color: Colors.white),
-              Icon(Icons.favorite, color: Colors.white),
-              Icon(Icons.person, color: Colors.white),
-              Icon(Icons.notifications, color: Colors.white),
+            borderWidth: 3.0, // 增加边框宽度使选中更明显
+            children: const [
+              Icon(Icons.looks_one, size: 20), // 颜色将由HexagonalButtonGroup动态设置
+              Icon(Icons.looks_two, size: 20),
+              Icon(Icons.looks_3, size: 20),
+              Icon(Icons.looks_4, size: 20),
+              Icon(Icons.looks_5, size: 20),
+              Icon(Icons.looks_6, size: 20),
             ],
           )),
     ];

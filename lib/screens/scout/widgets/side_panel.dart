@@ -288,7 +288,7 @@ class SidePanel extends StatelessWidget {
     ];
 
     // 提前计算isEnabled，避免在每个按钮中重复计算
-    final isEnabled = appState.hasCoral && (appState.faceSelected > -1);
+    final isEnabled = appState.hasCoral && (appState.faceSelected > 0);
 
     return levels.asMap().entries.map((entry) {
       final index = entry.key;
