@@ -117,8 +117,12 @@ class LandscapeScreen extends StatelessWidget {
 
               // 计时器显示
               Container(
+                constraints: const BoxConstraints(
+                  maxHeight: 60, // 限制最大高度防止溢出
+                  minHeight: 44, // 确保最小高度
+                ),
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
                   color: AppTheme.surfaceSecondary,
                   borderRadius: BorderRadius.circular(12),
