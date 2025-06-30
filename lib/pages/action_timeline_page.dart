@@ -12,6 +12,16 @@ class ActionTimelinePage extends StatefulWidget {
 }
 
 class _ActionTimelinePageState extends State<ActionTimelinePage> {
+  // 面部映射：数字值 -> 显示文本
+  final Map<int, String> _faceDisplayMap = {
+    1: '正',
+    2: '左',
+    3: '网',
+    4: '背',
+    5: '洞',
+    6: '右',
+  };
+
   String _getActionTitle(ScoutingAction action) {
     // Convert action.type to a more readable format if necessary
     // For example, 'intake coral' -> 'Intake Coral'
@@ -47,7 +57,7 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
       subtitles.add(Text('得分藻类类型: ${action.scoreAlgaeType}'));
     }
     if (action.face != null) {
-      subtitles.add(Text('朝向: ${action.face}'));
+      subtitles.add(Text('朝向: ${_faceDisplayMap[action.face] ?? action.face}'));
     }
     if (action.success != null) {
       subtitles.add(Text('成功: ${action.success}'));

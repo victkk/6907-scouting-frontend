@@ -25,6 +25,7 @@ class _EditActionPageState extends State<EditActionPage> {
   String? _scoreCoralType;
   String? _scoreAlgaeType;
   int? _face;
+  String? _faceDisplay; // 用于显示的面部选项
   bool? _success;
   AppState? _appState; // 添加AppState引用
 
@@ -54,6 +55,26 @@ class _EditActionPageState extends State<EditActionPage> {
   // 定义所有可能的 score algae type
   final List<String> _scoreAlgaeTypes = ['net', 'processor'];
 
+  // 面部选项映射：显示文本 -> 数字值
+  final Map<String, int> _faceOptions = {
+    '正': 1,
+    '左': 2,
+    '网': 3,
+    '背': 4,
+    '洞': 5,
+    '右': 6,
+  };
+
+  // 反向映射：数字值 -> 显示文本
+  final Map<int, String> _faceDisplayMap = {
+    1: '正',
+    2: '左',
+    3: '网',
+    4: '背',
+    5: '洞',
+    6: '右',
+  };
+
   @override
   void initState() {
     super.initState();
@@ -69,6 +90,7 @@ class _EditActionPageState extends State<EditActionPage> {
       _scoreAlgaeType = widget.action!.scoreAlgaeType;
       _face = widget.action!.face;
       _success = widget.action!.success;
+      _faceDisplay = _face != null ? _faceDisplayMap[_face] : null;
     } else {
       _type = _actionTypes.first; // 默认选择第一个类型
       _timestamp = widget.initialTimestamp ?? _appState!.getRelativeTimestamp();
@@ -144,6 +166,7 @@ class _EditActionPageState extends State<EditActionPage> {
                     _scoreCoralType = null;
                     _scoreAlgaeType = null;
                     _face = null;
+                    _faceDisplay = null;
                     _success = null;
                   });
                 },
@@ -205,23 +228,23 @@ class _EditActionPageState extends State<EditActionPage> {
                   validator: (value) =>
                       value == null ? 'Please select a type' : null,
                 ),
-                TextFormField(
-                  initialValue: _face?.toString(),
-                  decoration: const InputDecoration(labelText: 'Face (1-6)'),
-                  keyboardType: TextInputType.number,
-                  onSaved: (value) => _face = value != null && value.isNotEmpty
-                      ? int.tryParse(value)
-                      : null,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a face value';
-                    }
-                    final n = int.tryParse(value);
-                    if (n == null || n < 1 || n > 6) {
-                      return 'Face must be between 1 and 6';
-                    }
-                    return null;
+                DropdownButtonFormField<String>(
+                  value: _faceDisplay,
+                  decoration: const InputDecoration(labelText: 'Face'),
+                  items: _faceOptions.keys.map((String key) {
+                    return DropdownMenuItem<String>(
+                      value: key,
+                      child: Text('$key (${_faceOptions[key]})'),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _faceDisplay = newValue;
+                      _face = _faceOptions[newValue];
+                    });
                   },
+                  validator: (value) =>
+                      value == null ? 'Please select a face' : null,
                 ),
                 CheckboxListTile(
                   title: const Text('Success'),
