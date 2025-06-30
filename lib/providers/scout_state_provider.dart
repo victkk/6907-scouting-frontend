@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../models/scout_state.dart';
 import '../models/action.dart';
+import '../models/match_record.dart';
 
 import 'dart:async'; // 导入 Timer 相关功能
 
@@ -85,13 +86,17 @@ class AppStateProvider with ChangeNotifier {
   }
 
   void updateMatchInfo({
-    required String event,
-    required String matchCode,
+    int? season,
+    required String eventCode,
+    required TournamentLevel tournamentLevel,
+    required int matchNumber,
     required int teamNo,
   }) {
     _appState.updateMatchInfo(
-      event: event,
-      matchCode: matchCode,
+      season: season,
+      eventCode: eventCode,
+      tournamentLevel: tournamentLevel,
+      matchNumber: matchNumber,
       teamNo: teamNo,
     );
     notifyListeners();

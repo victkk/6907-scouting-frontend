@@ -2,21 +2,44 @@ import 'dart:convert';
 import 'action.dart';
 import 'action_constants.dart';
 
+/// 锦标赛级别枚举
+enum TournamentLevel {
+  none('None'),
+  practice('Practice'),
+  qualification('Qualification'),
+  playoff('Playoff');
+
+  const TournamentLevel(this.value);
+  final String value;
+
+  static TournamentLevel fromString(String value) {
+    return TournamentLevel.values.firstWhere(
+      (level) => level.value == value,
+      orElse: () => TournamentLevel.none,
+    );
+  }
+}
+
 /// 比赛记录类
 class MatchRecord {
-  String event;
-  String matchCode;
+  int season;
+  String eventCode;
+  TournamentLevel tournamentLevel;
+  int matchNumber;
   int teamNo;
   String autoStartPosition;
   List<ScoutingAction> actions;
 
   MatchRecord({
-    required this.event,
-    required this.matchCode,
+    this.season = 2025,
+    required this.eventCode,
+    this.tournamentLevel = TournamentLevel.none,
+    required this.matchNumber,
     required this.teamNo,
     required this.autoStartPosition,
     required this.actions,
   });
+
   void _sortActions() {
     actions.sort((a, b) => a.timestamp.compareTo(b.timestamp));
   }
@@ -31,8 +54,11 @@ class MatchRecord {
     }
 
     return MatchRecord(
-      event: json['event'] ?? '',
-      matchCode: json['matchCode'] ?? '',
+      season: json['season'] ?? 2025,
+      eventCode: json['eventCode'] ?? '',
+      tournamentLevel:
+          TournamentLevel.fromString(json['tournamentLevel'] ?? 'None'),
+      matchNumber: json['matchNumber'] ?? 0,
       teamNo: json['teamNo'] ?? 0,
       autoStartPosition: json['autoStartPosition'] ?? '',
       actions: actionsList,
@@ -42,8 +68,10 @@ class MatchRecord {
   /// 转换为JSON
   Map<String, dynamic> toJson() {
     return {
-      'event': event,
-      'matchCode': matchCode,
+      'season': season,
+      'eventCode': eventCode,
+      'tournamentLevel': tournamentLevel.value,
+      'matchNumber': matchNumber,
       'teamNo': teamNo,
       'autoStartPosition': autoStartPosition,
       'action': actions.map((action) => action.toJson()).toList(),
@@ -59,8 +87,10 @@ class MatchRecord {
 
   /// 创建空记录
   static MatchRecord empty() => MatchRecord(
-        event: '',
-        matchCode: '',
+        season: 2025,
+        eventCode: '',
+        tournamentLevel: TournamentLevel.none,
+        matchNumber: 0,
         teamNo: 0,
         autoStartPosition: '',
         actions: [],
@@ -106,15 +136,19 @@ class MatchRecord {
 
   /// 复制记录并更新部分字段
   MatchRecord copyWith({
-    String? event,
-    String? matchCode,
+    int? season,
+    String? eventCode,
+    TournamentLevel? tournamentLevel,
+    int? matchNumber,
     int? teamNo,
     String? autoStartPosition,
     List<ScoutingAction>? actions,
   }) {
     return MatchRecord(
-      event: event ?? this.event,
-      matchCode: matchCode ?? this.matchCode,
+      season: season ?? this.season,
+      eventCode: eventCode ?? this.eventCode,
+      tournamentLevel: tournamentLevel ?? this.tournamentLevel,
+      matchNumber: matchNumber ?? this.matchNumber,
       teamNo: teamNo ?? this.teamNo,
       autoStartPosition: autoStartPosition ?? this.autoStartPosition,
       actions: actions ?? List.from(this.actions),

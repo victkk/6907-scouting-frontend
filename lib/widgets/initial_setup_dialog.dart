@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/scout_state_provider.dart';
 import '../theme/app_theme.dart';
+import '../models/match_record.dart';
 
 class InitialSetupDialog extends StatefulWidget {
   const InitialSetupDialog({super.key});
@@ -14,45 +15,13 @@ class _InitialSetupDialogState extends State<InitialSetupDialog>
     with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _teamNoController = TextEditingController();
+  final _matchNumberController = TextEditingController();
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
 
   // 下拉菜单选择的值
-  String? _selectedEvent;
-  String? _selectedMatchCode;
-
-  // 样例数据
-  final List<String> _events = [
-    '25SY-OS',
-    'FRC Regional Championship',
-    'FIRST World Championship',
-    'District Event',
-    'Practice Match',
-    'Scrimmage',
-  ];
-
-  final List<String> _matchCodes = [
-    'QM1',
-    'QM2',
-    'QM3',
-    'QM4',
-    'QM5',
-    'QM10',
-    'QM15',
-    'QM20',
-    'QM25',
-    'QM30',
-    'SF1M1',
-    'SF1M2',
-    'SF1M3',
-    'SF2M1',
-    'SF2M2',
-    'SF2M3',
-    'F1M1',
-    'F1M2',
-    'F1M3',
-  ];
+  TournamentLevel? _selectedTournamentLevel;
 
   @override
   void initState() {
@@ -84,6 +53,7 @@ class _InitialSetupDialogState extends State<InitialSetupDialog>
   @override
   void dispose() {
     _teamNoController.dispose();
+    _matchNumberController.dispose();
     _animationController.dispose();
     super.dispose();
   }
@@ -94,8 +64,9 @@ class _InitialSetupDialogState extends State<InitialSetupDialog>
 
       // 更新MatchRecord的基本信息
       provider.updateMatchInfo(
-        event: _selectedEvent!,
-        matchCode: _selectedMatchCode!,
+        eventCode: 'SYOF',
+        tournamentLevel: _selectedTournamentLevel!,
+        matchNumber: int.parse(_matchNumberController.text),
         teamNo: int.parse(_teamNoController.text),
       );
 
@@ -196,42 +167,24 @@ class _InitialSetupDialogState extends State<InitialSetupDialog>
   Widget _buildFormFields() {
     return Column(
       children: [
-        // 赛事下拉菜单
-        _buildDropdownField(
-          value: _selectedEvent,
-          label: 'Event / 赛事',
-          hint: '请选择赛事类型',
-          icon: Icons.event,
-          items: _events,
-          onChanged: (String? newValue) {
-            setState(() {
-              _selectedEvent = newValue;
-            });
-          },
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return '请选择赛事类型';
-            }
-            return null;
-          },
-        ),
+        // 锦标赛级别下拉菜单
+        _buildTournamentLevelDropdown(),
         const SizedBox(height: 12),
 
-        // 比赛代码下拉菜单
-        _buildDropdownField(
-          value: _selectedMatchCode,
-          label: 'Match Code / 比赛代码',
-          hint: '请选择比赛代码',
-          icon: Icons.code,
-          items: _matchCodes,
-          onChanged: (String? newValue) {
-            setState(() {
-              _selectedMatchCode = newValue;
-            });
-          },
+        // 比赛编号输入框
+        _buildTextFormField(
+          controller: _matchNumberController,
+          label: 'Match Number / 比赛编号',
+          hint: '输入比赛编号',
+          icon: Icons.numbers,
+          keyboardType: TextInputType.number,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return '请选择比赛代码';
+              return '请输入比赛编号';
+            }
+            final number = int.tryParse(value);
+            if (number == null || number <= 0) {
+              return '请输入有效的比赛编号';
             }
             return null;
           },
@@ -257,6 +210,59 @@ class _InitialSetupDialogState extends State<InitialSetupDialog>
           },
         ),
       ],
+    );
+  }
+
+  Widget _buildTournamentLevelDropdown() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.backgroundSecondary,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.borderColor,
+          width: 1,
+        ),
+      ),
+      child: DropdownButtonFormField<TournamentLevel>(
+        value: _selectedTournamentLevel,
+        style: TextStyle(color: AppTheme.textPrimary, fontSize: 16),
+        dropdownColor: AppTheme.surfacePrimary,
+        decoration: InputDecoration(
+          labelText: 'Tournament Level / 锦标赛级别',
+          hintText: '请选择锦标赛级别',
+          prefixIcon: Icon(Icons.emoji_events, color: AppTheme.primaryColor),
+          labelStyle: TextStyle(color: AppTheme.textSecondary),
+          hintStyle: TextStyle(color: AppTheme.textDisabled),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Colors.transparent,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        ),
+        items: TournamentLevel.values.map((TournamentLevel level) {
+          return DropdownMenuItem<TournamentLevel>(
+            value: level,
+            child: Text(
+              level.value,
+              style: TextStyle(color: AppTheme.textPrimary),
+            ),
+          );
+        }).toList(),
+        onChanged: (TournamentLevel? newValue) {
+          setState(() {
+            _selectedTournamentLevel = newValue;
+          });
+        },
+        validator: (value) {
+          if (value == null) {
+            return '请选择锦标赛级别';
+          }
+          return null;
+        },
+      ),
     );
   }
 

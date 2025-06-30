@@ -101,13 +101,17 @@ class AppState {
   }
 
   void updateMatchInfo({
-    required String event,
-    required String matchCode,
+    int? season,
+    required String eventCode,
+    required TournamentLevel tournamentLevel,
+    required int matchNumber,
     required int teamNo,
   }) {
     matchRecord = matchRecord.copyWith(
-      event: event,
-      matchCode: matchCode,
+      season: season,
+      eventCode: eventCode,
+      tournamentLevel: tournamentLevel,
+      matchNumber: matchNumber,
       teamNo: teamNo,
     );
   }
