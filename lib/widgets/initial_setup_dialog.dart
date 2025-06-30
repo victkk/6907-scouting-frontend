@@ -24,10 +24,10 @@ class _InitialSetupDialogState extends State<InitialSetupDialog>
 
   // 样例数据
   final List<String> _events = [
+    '25SY-OS',
     'FRC Regional Championship',
     'FIRST World Championship',
     'District Event',
-    'Off-Season Competition',
     'Practice Match',
     'Scrimmage',
   ];

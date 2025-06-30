@@ -93,6 +93,9 @@ class _CustomButtonState extends State<CustomButton>
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = screenSize.width < 4000; // 判断是否为小屏幕
+
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
@@ -103,18 +106,19 @@ class _CustomButtonState extends State<CustomButton>
             width: widget.width,
             height: widget.height,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius:
+                  BorderRadius.circular(isSmallScreen ? 8 : 16), // 进一步减少圆角
               boxShadow: widget.isEnabled
                   ? [
                       BoxShadow(
                         color: _getBackgroundColor().withOpacity(0.3),
-                        blurRadius: 12,
-                        offset: const Offset(0, 6),
+                        blurRadius: isSmallScreen ? 6 : 12, // 减少阴影
+                        offset: Offset(0, isSmallScreen ? 3 : 6), // 减少偏移
                       ),
                       BoxShadow(
                         color: Colors.black.withOpacity(0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
+                        blurRadius: isSmallScreen ? 4 : 8, // 减少阴影
+                        offset: Offset(0, isSmallScreen ? 1 : 2), // 减少偏移
                       ),
                     ]
                   : [
@@ -140,7 +144,8 @@ class _CustomButtonState extends State<CustomButton>
                         )
                       : null,
                   color: widget.useGradient ? null : _getBackgroundColor(),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius:
+                      BorderRadius.circular(isSmallScreen ? 8 : 16), // 进一步减少圆角
                   border: Border.all(
                     color: widget.isEnabled
                         ? _getBackgroundColor().withOpacity(0.3)
@@ -177,10 +182,12 @@ class _CustomButtonState extends State<CustomButton>
                           _animationController.reverse();
                         }
                       : null,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius:
+                      BorderRadius.circular(isSmallScreen ? 8 : 16), // 进一步减少圆角
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: isSmallScreen ? 6 : 16, // 进一步减少padding
+                        vertical: isSmallScreen ? 4 : 12), // 进一步减少padding
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -188,21 +195,21 @@ class _CustomButtonState extends State<CustomButton>
                           Icon(
                             widget.icon,
                             color: _getTextColor(),
-                            size: 20,
+                            size: isSmallScreen ? 12 : 20, // 进一步减少图标大小
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: isSmallScreen ? 3 : 8), // 进一步减少间距
                         ],
                         Flexible(
                           child: Text(
                             widget.label,
                             style: TextStyle(
                               color: _getTextColor(),
-                              fontSize: 14,
+                              fontSize: isSmallScreen ? 9 : 14, // 进一步减少字体大小
                               fontWeight: FontWeight.w600,
                             ),
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
+                            maxLines: isSmallScreen ? 1 : 2, // 小屏幕只显示一行
                           ),
                         ),
                       ],

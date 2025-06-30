@@ -89,28 +89,6 @@ class HexagonalButtonGroup extends StatelessWidget {
               ),
             ),
           ),
-
-          // 边框 - 为选中的部分添加明显边框
-          if (isSelected)
-            ClipPath(
-              clipper: TriangularSectionClipper(
-                sectionIndex: index,
-                sections: 6,
-              ),
-              child: CustomPaint(
-                painter: TriangularSectionBorderPainter(
-                  sectionIndex: index,
-                  sections: 6,
-                  color: borderColor,
-                  strokeWidth: borderWidth,
-                ),
-                size: Size(size, size),
-              ),
-            ),
-
-          // 子组件 (图标等)
-          if (children[index] != null)
-            _buildPositionedChild(sectionAngle, children[index]!, isSelected),
         ],
       ),
     );

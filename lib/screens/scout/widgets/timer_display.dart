@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../providers/scout_state_provider.dart';
 import '../../../models/scout_state.dart';
 import '../../../theme/app_theme.dart';
+import 'dart:ui';
 
 class TimerDisplay extends StatefulWidget {
   const TimerDisplay({super.key});
@@ -40,6 +41,9 @@ class _TimerDisplayState extends State<TimerDisplay>
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = screenSize.width < 4000; // 判断是否为小屏幕
+
     return Consumer<AppStateProvider>(
       builder: (context, provider, child) {
         final remainingTime = provider.getRemainingTime();
@@ -62,15 +66,15 @@ class _TimerDisplayState extends State<TimerDisplay>
               final minutes = (remainingTime / 60).floor();
               final seconds = remainingTime % 60;
               displayText = '$minutes:${seconds.toString().padLeft(2, '0')}';
-              phaseText = '自动阶段';
+              phaseText = '自动';
               primaryColor = AppTheme.successColor;
               phaseIcon = Icons.smart_toy;
             }
             break;
 
           case GamePhase.waitingTeleop:
-            displayText = '等待中';
-            phaseText = '准备手动阶段';
+            displayText = '等待';
+            phaseText = '准备';
             primaryColor = AppTheme.warningColor;
             backgroundColor = AppTheme.warningColor.withOpacity(0.1);
             phaseIcon = Icons.pause_circle_outline;
@@ -82,7 +86,7 @@ class _TimerDisplayState extends State<TimerDisplay>
               final minutes = (remainingTime / 60).floor();
               final seconds = remainingTime % 60;
               displayText = '$minutes:${seconds.toString().padLeft(2, '0')}';
-              phaseText = '手动阶段';
+              phaseText = '手动';
               phaseIcon = Icons.gamepad;
 
               // 根据剩余时间改变颜色和效果
@@ -101,8 +105,8 @@ class _TimerDisplayState extends State<TimerDisplay>
             break;
 
           case GamePhase.finished:
-            displayText = '已结束';
-            phaseText = '比赛完成';
+            displayText = '完成';
+            phaseText = '结束';
             primaryColor = AppTheme.textDisabled;
             backgroundColor = AppTheme.textDisabled.withOpacity(0.1);
             phaseIcon = Icons.flag;
@@ -128,8 +132,9 @@ class _TimerDisplayState extends State<TimerDisplay>
               child: Transform.scale(
                 scale: shouldPulse ? _pulseAnimation.value : 1.0,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: isSmallScreen ? 4 : 12,
+                      vertical: isSmallScreen ? 2 : 6), // 大幅减少padding
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
@@ -139,16 +144,17 @@ class _TimerDisplayState extends State<TimerDisplay>
                         backgroundColor.withOpacity(0.5),
                       ],
                     ),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius:
+                        BorderRadius.circular(isSmallScreen ? 6 : 12), // 减少圆角
                     border: Border.all(
                       color: primaryColor.withOpacity(0.3),
-                      width: 1.5,
+                      width: 1,
                     ),
                     boxShadow: [
                       BoxShadow(
                         color: primaryColor.withOpacity(0.15),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
+                        blurRadius: isSmallScreen ? 3 : 6, // 减少阴影
+                        offset: Offset(0, isSmallScreen ? 1 : 2), // 减少偏移
                       ),
                     ],
                   ),
@@ -158,8 +164,8 @@ class _TimerDisplayState extends State<TimerDisplay>
                     children: [
                       // 阶段图标
                       Container(
-                        width: 28,
-                        height: 28,
+                        width: isSmallScreen ? 18 : 28, // 减少图标容器大小
+                        height: isSmallScreen ? 18 : 28,
                         decoration: BoxDecoration(
                           color: primaryColor.withOpacity(0.2),
                           shape: BoxShape.circle,
@@ -167,10 +173,10 @@ class _TimerDisplayState extends State<TimerDisplay>
                         child: Icon(
                           phaseIcon,
                           color: primaryColor,
-                          size: 16,
+                          size: isSmallScreen ? 10 : 16, // 大幅减少图标大小
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: isSmallScreen ? 4 : 8), // 减少间距
 
                       // 时间和阶段信息
                       Flexible(
@@ -183,14 +189,15 @@ class _TimerDisplayState extends State<TimerDisplay>
                               phaseText,
                               style: TextStyle(
                                 color: AppTheme.textSecondary,
-                                fontSize: 10,
+                                fontSize: isSmallScreen ? 7 : 10, // 大幅减少字体
                                 fontWeight: FontWeight.w500,
                                 height: 1.0, // 控制行高
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(height: 1),
+                            if (!isSmallScreen)
+                              const SizedBox(height: 1), // 小屏幕移除间距
 
                             // 时间显示
                             Text(
@@ -198,7 +205,7 @@ class _TimerDisplayState extends State<TimerDisplay>
                               style: TextStyle(
                                 color: primaryColor,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontSize: isSmallScreen ? 11 : 16, // 大幅减少字体
                                 height: 1.0, // 控制行高
                                 fontFeatures: const [
                                   FontFeature.tabularFigures()

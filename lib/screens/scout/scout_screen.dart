@@ -14,208 +14,73 @@ class LandscapeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = true; // 判断是否为小屏幕
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
           gradient: AppTheme.backgroundGradient,
         ),
-        child: Column(
-          children: [
-            // 顶部应用栏
-            _buildCustomAppBar(context),
-            // 主要内容区域
-            Expanded(
-              child: Consumer<AppStateProvider>(
-                builder: (context, provider, child) {
-                  return Stack(
-                    children: [
-                      // 主要界面
-                      _buildMainContent(context, screenSize),
+        child: Consumer<AppStateProvider>(
+          builder: (context, provider, child) {
+            return Stack(
+              children: [
+                // 主要界面 - 完全占满整个屏幕
+                _buildMainContent(context, screenSize, isSmallScreen),
 
-                      // 当处于等待手动阶段时，显示teleopStart按键
-                      if (provider.getCurrentPhase() == GamePhase.waitingTeleop)
-                        _buildTeleopStartOverlay(context, provider),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ],
+                // 当处于等待手动阶段时，显示teleopStart按键
+                if (provider.getCurrentPhase() == GamePhase.waitingTeleop)
+                  _buildTeleopStartOverlay(context, provider),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildCustomAppBar(BuildContext context) {
-    return Container(
-      height: 80,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppTheme.backgroundSecondary,
-            AppTheme.surfacePrimary,
-          ],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Row(
-            children: [
-              // 应用图标和标题
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: AppTheme.primaryGradient,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.primaryColor.withOpacity(0.3),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.sports_motorsports,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '6907 Scout',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.textPrimary,
-                        ),
-                  ),
-                  Text(
-                    'FRC 侦察系统',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppTheme.textSecondary,
-                        ),
-                  ),
-                ],
-              ),
+  Widget _buildMainContent(
+      BuildContext context, Size screenSize, bool isSmallScreen) {
+    // 为手机屏幕优化的布局比例 - 增加侧边栏的宽度
+    final double leftPanelRatio = isSmallScreen ? 0.28 : 0.2;
+    final double rightPanelRatio = isSmallScreen ? 0.28 : 0.2;
 
-              const Spacer(),
+    // 进一步减少手机屏幕上的间距
+    final double margin = isSmallScreen ? 3.0 : 12.0;
+    final double borderRadius = isSmallScreen ? 8.0 : 20.0;
 
-              // 计时器显示
-              Container(
-                constraints: const BoxConstraints(
-                  maxHeight: 60, // 限制最大高度防止溢出
-                  minHeight: 44, // 确保最小高度
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppTheme.surfaceSecondary,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: AppTheme.borderColor,
-                    width: 1,
-                  ),
-                ),
-                child: const TimerDisplay(),
-              ),
-
-              const SizedBox(width: 16),
-
-              // 时间线按钮
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            const ActionTimelinePage(),
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) {
-                          return SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(1.0, 0.0),
-                              end: Offset.zero,
-                            ).animate(CurvedAnimation(
-                              parent: animation,
-                              curve: Curves.easeInOut,
-                            )),
-                            child: child,
-                          );
-                        },
-                      ),
-                    );
-                  },
-                  style: AppTheme.primaryButtonStyle(borderRadius: 12),
-                  icon: const Icon(Icons.timeline, size: 20),
-                  label: const Text('时间线'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMainContent(BuildContext context, Size screenSize) {
     return Row(
       children: [
-        // 左侧面板 - 占据20%的宽度
+        // 左侧面板
         Container(
-          width: screenSize.width * 0.2,
-          margin: const EdgeInsets.all(12),
+          width: screenSize.width * leftPanelRatio,
+          margin: EdgeInsets.all(margin),
           decoration: BoxDecoration(
             color: AppTheme.surfacePrimary,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(borderRadius),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.2),
-                blurRadius: 15,
-                offset: const Offset(0, 8),
+                blurRadius: isSmallScreen ? 6.0 : 15.0,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
           child: const SidePanel(isLeftPanel: true),
         ),
 
-        // 中心区域 - 占据60%的宽度
+        // 中心区域
         Expanded(
           child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 12),
+            margin: EdgeInsets.symmetric(vertical: margin),
             decoration: BoxDecoration(
               color: AppTheme.surfacePrimary,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(borderRadius),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.2),
-                  blurRadius: 15,
-                  offset: const Offset(0, 8),
+                  blurRadius: isSmallScreen ? 6.0 : 15.0,
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
@@ -223,18 +88,18 @@ class LandscapeScreen extends StatelessWidget {
           ),
         ),
 
-        // 右侧面板 - 占据20%的宽度
+        // 右侧面板
         Container(
-          width: screenSize.width * 0.2,
-          margin: const EdgeInsets.all(12),
+          width: screenSize.width * rightPanelRatio,
+          margin: EdgeInsets.all(margin),
           decoration: BoxDecoration(
             color: AppTheme.surfacePrimary,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(borderRadius),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.2),
-                blurRadius: 15,
-                offset: const Offset(0, 8),
+                blurRadius: isSmallScreen ? 6.0 : 15.0,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
@@ -246,23 +111,30 @@ class LandscapeScreen extends StatelessWidget {
 
   Widget _buildTeleopStartOverlay(
       BuildContext context, AppStateProvider provider) {
+    final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = screenSize.width < 4000;
+
+    // 为小屏幕调整覆盖层按钮的大小
+    final double buttonWidth = isSmallScreen ? 250 : 400;
+    final double buttonHeight = isSmallScreen ? 120 : 200;
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.black.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(isSmallScreen ? 8.0 : 20.0),
       ),
       child: Center(
         child: Container(
-          width: 400,
-          height: 200,
+          width: buttonWidth,
+          height: buttonHeight,
           decoration: BoxDecoration(
             gradient: AppTheme.accentGradient,
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(isSmallScreen ? 16 : 30),
             boxShadow: [
               BoxShadow(
                 color: AppTheme.accentColor.withOpacity(0.5),
-                blurRadius: 30,
-                offset: const Offset(0, 15),
+                blurRadius: isSmallScreen ? 15 : 30,
+                offset: Offset(0, isSmallScreen ? 8 : 15),
               ),
             ],
           ),
@@ -272,29 +144,31 @@ class LandscapeScreen extends StatelessWidget {
               onTap: () {
                 provider.startTeleopPhase();
               },
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(isSmallScreen ? 16 : 30),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.play_arrow_rounded,
-                      size: 60,
+                      size: isSmallScreen ? 32 : 60,
                       color: Colors.white,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: isSmallScreen ? 6 : 16),
                     Text(
                       'teleopStart',
                       style: Theme.of(context).textTheme.displaySmall?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
+                            fontSize: isSmallScreen ? 18 : 32,
                           ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: isSmallScreen ? 2 : 8),
                     Text(
                       '点击开始手动操作阶段',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             color: Colors.white.withOpacity(0.9),
+                            fontSize: isSmallScreen ? 10 : 16,
                           ),
                     ),
                   ],

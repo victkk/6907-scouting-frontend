@@ -15,14 +15,22 @@ void main() {
     DeviceOrientation.landscapeRight,
   ]);
 
-  // 设置系统UI样式
+  // 设置系统UI样式 - 隐藏状态栏和导航栏，创建更沉浸式的体验
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: AppTheme.backgroundPrimary,
+      systemNavigationBarColor: Colors.transparent,
       systemNavigationBarIconBrightness: Brightness.light,
+      // 隐藏状态栏和导航栏
+      statusBarBrightness: Brightness.light,
     ),
+  );
+
+  // 启用边到边显示，隐藏系统UI
+  SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.immersiveSticky,
+    overlays: [], // 完全隐藏系统UI
   );
 
   runApp(MyApp());
@@ -40,6 +48,17 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.darkTheme,
         debugShowCheckedModeBanner: false,
         home: const AppWrapper(),
+        // 为web平台添加额外的配置
+        builder: (context, child) {
+          return MediaQuery(
+            // 移除顶部padding，让应用占满整个屏幕
+            data: MediaQuery.of(context).copyWith(
+              padding: EdgeInsets.zero,
+              viewInsets: EdgeInsets.zero,
+            ),
+            child: child!,
+          );
+        },
       ),
     );
   }
