@@ -229,10 +229,10 @@ class CenterImage extends StatelessWidget {
       Positioned(
           top: height * 0.296,
           left: width * 0.306,
-          width: width * 0.35,
-          height: width * 0.35,
+          width: width * 0.4,
+          height: width * 0.4,
           child: HexagonalButtonGroup(
-            size: width * 0.3,
+            size: width * 0.36,
             selectedIndex: appState.faceSelected, // 传递当前选中的face
             selectedColor: const Color.fromARGB(255, 255, 152, 0), // 橙色高亮
             unselectedColor: const Color.fromARGB(255, 120, 120, 120), // 灰色

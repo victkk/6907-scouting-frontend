@@ -91,8 +91,11 @@ class SidePanel extends StatelessWidget {
       // 防守模式
       return Column(
         children: [
-          // 顶部紧凑的计时器和时间线控制
-          if (isSmallScreen) _buildCompactControls(context, isSmallScreen),
+          // 顶部紧凑的计时器和时间线控制 - 在小屏幕下平分高度
+          if (isSmallScreen)
+            Expanded(
+              child: _buildCompactControls(context, isSmallScreen),
+            ),
           if (isSmallScreen) SizedBox(height: 4), // 最小间距
 
           // Defense按钮撑满剩余空间
@@ -114,8 +117,11 @@ class SidePanel extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // 顶部紧凑的计时器和时间线控制
-          if (isSmallScreen) _buildCompactControls(context, isSmallScreen),
+          // 顶部紧凑的计时器和时间线控制 - 在小屏幕下平分高度
+          if (isSmallScreen)
+            Expanded(
+              child: _buildCompactControls(context, isSmallScreen),
+            ),
           if (isSmallScreen) SizedBox(height: 4), // 最小间距
 
           // 机器人状态显示 - 在小屏幕下平分高度
@@ -218,11 +224,6 @@ class SidePanel extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // 如果是小屏幕，在右侧面板添加紧凑控制
-          if (isSmallScreen && !isLeftPanel)
-            _buildCompactControls(context, isSmallScreen),
-          if (isSmallScreen && !isLeftPanel) SizedBox(height: 4),
-
           // Foul按钮占据主要空间
           Expanded(
             flex: 4,
@@ -359,7 +360,7 @@ class SidePanel extends StatelessWidget {
   // 紧凑的计时器和时间线控制 - 新增方法
   Widget _buildCompactControls(BuildContext context, bool isSmallScreen) {
     return Container(
-      height: isSmallScreen ? 35 : 45, // 非常紧凑的高度
+      height: isSmallScreen ? double.infinity : 45, // 小屏幕时由Expanded控制高度
       decoration: BoxDecoration(
         color: AppTheme.surfaceSecondary,
         borderRadius: BorderRadius.circular(6),
@@ -414,9 +415,11 @@ class SidePanel extends StatelessWidget {
                 },
                 borderRadius: BorderRadius.circular(6),
                 child: Container(
+                  height: double.infinity, // 竖向撑满
                   padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center, // 垂直居中
                     children: [
                       Icon(
                         Icons.timeline,

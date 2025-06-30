@@ -128,97 +128,93 @@ class _TimerDisplayState extends State<TimerDisplay>
         return AnimatedBuilder(
           animation: _pulseAnimation,
           builder: (context, child) {
-            return Center(
-              child: Transform.scale(
-                scale: shouldPulse ? _pulseAnimation.value : 1.0,
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: isSmallScreen ? 4 : 12,
-                      vertical: isSmallScreen ? 2 : 6), // 大幅减少padding
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        backgroundColor,
-                        backgroundColor.withOpacity(0.5),
-                      ],
-                    ),
-                    borderRadius:
-                        BorderRadius.circular(isSmallScreen ? 6 : 12), // 减少圆角
-                    border: Border.all(
-                      color: primaryColor.withOpacity(0.3),
-                      width: 1,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: primaryColor.withOpacity(0.15),
-                        blurRadius: isSmallScreen ? 3 : 6, // 减少阴影
-                        offset: Offset(0, isSmallScreen ? 1 : 2), // 减少偏移
-                      ),
+            return Transform.scale(
+              scale: shouldPulse ? _pulseAnimation.value : 1.0,
+              child: Container(
+                width: double.infinity, // 撑满宽度
+                height: double.infinity, // 撑满高度
+                padding: EdgeInsets.symmetric(
+                    horizontal: isSmallScreen ? 4 : 12,
+                    vertical: isSmallScreen ? 2 : 6), // 大幅减少padding
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      backgroundColor,
+                      backgroundColor.withOpacity(0.5),
                     ],
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // 阶段图标
-                      Container(
-                        width: isSmallScreen ? 18 : 28, // 减少图标容器大小
-                        height: isSmallScreen ? 18 : 28,
-                        decoration: BoxDecoration(
-                          color: primaryColor.withOpacity(0.2),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          phaseIcon,
-                          color: primaryColor,
-                          size: isSmallScreen ? 10 : 16, // 大幅减少图标大小
-                        ),
+                  borderRadius:
+                      BorderRadius.circular(isSmallScreen ? 6 : 12), // 减少圆角
+                  boxShadow: [
+                    BoxShadow(
+                      color: primaryColor.withOpacity(0.15),
+                      blurRadius: isSmallScreen ? 3 : 6, // 减少阴影
+                      offset: Offset(0, isSmallScreen ? 1 : 2), // 减少偏移
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max, // 撑满整个Row
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // 阶段图标
+                    Container(
+                      width: isSmallScreen ? 18 : 28, // 减少图标容器大小
+                      height: isSmallScreen ? 18 : 28,
+                      decoration: BoxDecoration(
+                        color: primaryColor.withOpacity(0.2),
+                        shape: BoxShape.circle,
                       ),
-                      SizedBox(width: isSmallScreen ? 4 : 8), // 减少间距
-
-                      // 时间和阶段信息
-                      Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // 阶段名称
-                            Text(
-                              phaseText,
-                              style: TextStyle(
-                                color: AppTheme.textSecondary,
-                                fontSize: isSmallScreen ? 7 : 10, // 大幅减少字体
-                                fontWeight: FontWeight.w500,
-                                height: 1.0, // 控制行高
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            if (!isSmallScreen)
-                              const SizedBox(height: 1), // 小屏幕移除间距
-
-                            // 时间显示
-                            Text(
-                              displayText,
-                              style: TextStyle(
-                                color: primaryColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: isSmallScreen ? 11 : 16, // 大幅减少字体
-                                height: 1.0, // 控制行高
-                                fontFeatures: const [
-                                  FontFeature.tabularFigures()
-                                ],
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
+                      child: Icon(
+                        phaseIcon,
+                        color: primaryColor,
+                        size: isSmallScreen ? 10 : 16, // 大幅减少图标大小
                       ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(width: isSmallScreen ? 4 : 8), // 减少间距
+
+                    // 时间和阶段信息
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // 阶段名称
+                          Text(
+                            phaseText,
+                            style: TextStyle(
+                              color: AppTheme.textSecondary,
+                              fontSize: isSmallScreen ? 12 : 12, // 大幅减少字体
+                              fontWeight: FontWeight.w500,
+                              height: 1.0, // 控制行高
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          if (!isSmallScreen)
+                            const SizedBox(height: 1), // 小屏幕移除间距
+
+                          // 时间显示
+                          Text(
+                            displayText,
+                            style: TextStyle(
+                              color: primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: isSmallScreen ? 16 : 16, // 大幅减少字体
+                              height: 1.0, // 控制行高
+                              fontFeatures: const [
+                                FontFeature.tabularFigures()
+                              ],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );
