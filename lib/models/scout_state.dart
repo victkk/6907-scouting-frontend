@@ -71,7 +71,7 @@ class AppState {
       _saveTimer?.cancel();
       _saveTimer = Timer(const Duration(seconds: 135), () {
         currentPhase = GamePhase.finished;
-        saveMatchRecordToLocal();
+        // saveMatchRecordToLocal();
       });
     }
   }
