@@ -118,8 +118,8 @@ class _InitialSetupDialogState extends State<InitialSetupDialog>
               child: ScaleTransition(
                 scale: _scaleAnimation,
                 child: Container(
-                  padding: const EdgeInsets.all(32),
-                  width: 500,
+                  padding: const EdgeInsets.all(20),
+                  width: 400,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
@@ -149,11 +149,11 @@ class _InitialSetupDialogState extends State<InitialSetupDialog>
                       children: [
                         // 顶部图标和标题
                         _buildHeader(),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 20),
 
                         // 表单字段
                         _buildFormFields(),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 20),
 
                         // 提交按钮
                         _buildSubmitButton(),
@@ -172,43 +172,20 @@ class _InitialSetupDialogState extends State<InitialSetupDialog>
   Widget _buildHeader() {
     return Column(
       children: [
-        // 图标
-        Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: AppTheme.primaryGradient,
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.primaryColor.withOpacity(0.3),
-                blurRadius: 15,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: const Icon(
-            Icons.settings,
-            size: 40,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(height: 20),
-
         // 标题
         Text(
           'Match Setup',
-          style: Theme.of(context).textTheme.displaySmall?.copyWith(
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 color: AppTheme.textPrimary,
                 fontWeight: FontWeight.bold,
               ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
 
         // 副标题
         Text(
           '请设置比赛相关信息',
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: AppTheme.textSecondary,
               ),
         ),
@@ -238,7 +215,7 @@ class _InitialSetupDialogState extends State<InitialSetupDialog>
             return null;
           },
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 12),
 
         // 比赛代码下拉菜单
         _buildDropdownField(
@@ -259,7 +236,7 @@ class _InitialSetupDialogState extends State<InitialSetupDialog>
             return null;
           },
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 12),
 
         // 队伍编号输入框
         _buildTextFormField(
@@ -379,7 +356,7 @@ class _InitialSetupDialogState extends State<InitialSetupDialog>
   Widget _buildSubmitButton() {
     return Container(
       width: double.infinity,
-      height: 60,
+      height: 48,
       decoration: BoxDecoration(
         gradient: AppTheme.primaryGradient,
         borderRadius: BorderRadius.circular(16),
@@ -403,12 +380,12 @@ class _InitialSetupDialogState extends State<InitialSetupDialog>
                 const Icon(
                   Icons.play_arrow_rounded,
                   color: Colors.white,
-                  size: 28,
+                  size: 20,
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8),
                 Text(
                   'Start Match / 开始比赛',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
