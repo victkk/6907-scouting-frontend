@@ -29,9 +29,8 @@ class _EditActionPageState extends State<EditActionPage> {
   bool? _success;
   AppState? _appState; // 添加AppState引用
 
-  // 定义所有可能的 action type
+  // 定义所有可能的 action type (除了start，start只能通过特定按钮创建)
   final List<String> _actionTypes = [
-    'start',
     'defense',
     'foul',
     'intake coral',
@@ -132,243 +131,310 @@ class _EditActionPageState extends State<EditActionPage> {
 
   @override
   Widget build(BuildContext context) {
+    // 检查是否正在编辑start类型的action
+    final bool isEditingStartAction =
+        widget.action != null && widget.action!.type == 'start';
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.action == null ? 'Add Action' : 'Edit Action'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: _saveForm,
-          )
+          if (!isEditingStartAction) // 只有非start类型的action才显示保存按钮
+            IconButton(
+              icon: const Icon(Icons.save),
+              onPressed: _saveForm,
+            )
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: <Widget>[
-              DropdownButtonFormField<String>(
-                value: _type,
-                decoration: const InputDecoration(labelText: 'Action Type'),
-                items: _actionTypes.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _type = newValue!;
-                    // 根据选择的类型，重置相关字段
-                    _intakeCoralType = null;
-                    _intakeAlgaeType = null;
-                    _scoreCoralType = null;
-                    _scoreAlgaeType = null;
-                    _face = null;
-                    _faceDisplay = null;
-                    _success = null;
-                  });
-                },
-              ),
-              if (_type == 'intake coral')
-                DropdownButtonFormField<String>(
-                  value: _intakeCoralType,
-                  decoration:
-                      const InputDecoration(labelText: 'Intake Coral Type'),
-                  items: _intakeCoralTypes.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _intakeCoralType = newValue;
-                    });
-                  },
-                  validator: (value) =>
-                      value == null ? 'Please select a type' : null,
-                ),
-              if (_type == 'intake algae')
-                DropdownButtonFormField<String>(
-                  value: _intakeAlgaeType,
-                  decoration:
-                      const InputDecoration(labelText: 'Intake Algae Type'),
-                  items: _intakeAlgaeTypes.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _intakeAlgaeType = newValue;
-                    });
-                  },
-                  validator: (value) =>
-                      value == null ? 'Please select a type' : null,
-                ),
-              if (_type == 'score coral') ...[
-                DropdownButtonFormField<String>(
-                  value: _scoreCoralType,
-                  decoration:
-                      const InputDecoration(labelText: 'Score Coral Type'),
-                  items: _scoreCoralTypes.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _scoreCoralType = newValue;
-                    });
-                  },
-                  validator: (value) =>
-                      value == null ? 'Please select a type' : null,
-                ),
-                DropdownButtonFormField<String>(
-                  value: _faceDisplay,
-                  decoration: const InputDecoration(labelText: 'Face'),
-                  items: _faceOptions.keys.map((String key) {
-                    return DropdownMenuItem<String>(
-                      value: key,
-                      child: Text('$key (${_faceOptions[key]})'),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _faceDisplay = newValue;
-                      _face = _faceOptions[newValue];
-                    });
-                  },
-                  validator: (value) =>
-                      value == null ? 'Please select a face' : null,
-                ),
-                CheckboxListTile(
-                  title: const Text('Success'),
-                  value: _success ?? false, // 默认为 false 如果是 null
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _success = value;
-                    });
-                  },
-                ),
-              ],
-              if (_type == 'score algae') ...[
-                DropdownButtonFormField<String>(
-                  value: _scoreAlgaeType,
-                  decoration:
-                      const InputDecoration(labelText: 'Score Algae Type'),
-                  items: _scoreAlgaeTypes.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _scoreAlgaeType = newValue;
-                    });
-                  },
-                  validator: (value) =>
-                      value == null ? 'Please select a type' : null,
-                ),
-                CheckboxListTile(
-                  title: const Text('Success'),
-                  value: _success ?? false, // 默认为 false 如果是 null
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _success = value;
-                    });
-                  },
-                ),
-              ],
-              // 时间戳编辑区域
-              Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        const Text('时间戳调整',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 16),
+        child: isEditingStartAction
+            ? _buildStartActionWarning() // 如果是start类型，显示警告信息
+            : Form(
+                key: _formKey,
+                child: ListView(
+                  children: <Widget>[
+                    DropdownButtonFormField<String>(
+                      value: _type,
+                      decoration:
+                          const InputDecoration(labelText: 'Action Type'),
+                      items: _actionTypes.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _type = newValue!;
+                          // 根据选择的类型，重置相关字段
+                          _intakeCoralType = null;
+                          _intakeAlgaeType = null;
+                          _scoreCoralType = null;
+                          _scoreAlgaeType = null;
+                          _face = null;
+                          _faceDisplay = null;
+                          _success = null;
+                        });
+                      },
+                    ),
+                    if (_type == 'intake coral')
+                      DropdownButtonFormField<String>(
+                        value: _intakeCoralType,
+                        decoration: const InputDecoration(
+                            labelText: 'Intake Coral Type'),
+                        items: _intakeCoralTypes.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _intakeCoralType = newValue;
+                          });
+                        },
+                        validator: (value) =>
+                            value == null ? 'Please select a type' : null,
+                      ),
+                    if (_type == 'intake algae')
+                      DropdownButtonFormField<String>(
+                        value: _intakeAlgaeType,
+                        decoration: const InputDecoration(
+                            labelText: 'Intake Algae Type'),
+                        items: _intakeAlgaeTypes.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _intakeAlgaeType = newValue;
+                          });
+                        },
+                        validator: (value) =>
+                            value == null ? 'Please select a type' : null,
+                      ),
+                    if (_type == 'score coral') ...[
+                      DropdownButtonFormField<String>(
+                        value: _scoreCoralType,
+                        decoration: const InputDecoration(
+                            labelText: 'Score Coral Type'),
+                        items: _scoreCoralTypes.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _scoreCoralType = newValue;
+                          });
+                        },
+                        validator: (value) =>
+                            value == null ? 'Please select a type' : null,
+                      ),
+                      DropdownButtonFormField<String>(
+                        value: _faceDisplay,
+                        decoration: const InputDecoration(labelText: 'Face'),
+                        items: _faceOptions.keys.map((String key) {
+                          return DropdownMenuItem<String>(
+                            value: key,
+                            child: Text('$key (${_faceOptions[key]})'),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _faceDisplay = newValue;
+                            _face = _faceOptions[newValue];
+                          });
+                        },
+                        validator: (value) =>
+                            value == null ? 'Please select a face' : null,
+                      ),
+                      CheckboxListTile(
+                        title: const Text('Success'),
+                        value: _success ?? false, // 默认为 false 如果是 null
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _success = value;
+                          });
+                        },
+                      ),
+                    ],
+                    if (_type == 'score algae') ...[
+                      DropdownButtonFormField<String>(
+                        value: _scoreAlgaeType,
+                        decoration: const InputDecoration(
+                            labelText: 'Score Algae Type'),
+                        items: _scoreAlgaeTypes.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _scoreAlgaeType = newValue;
+                          });
+                        },
+                        validator: (value) =>
+                            value == null ? 'Please select a type' : null,
+                      ),
+                      CheckboxListTile(
+                        title: const Text('Success'),
+                        value: _success ?? false, // 默认为 false 如果是 null
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _success = value;
+                          });
+                        },
+                      ),
+                    ],
+                    // 时间戳编辑区域
+                    Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              const Text('时间戳调整',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 16),
 
-                        // 时间滑块
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.blueGrey[800],
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.blueGrey[600]!),
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                '${_appState!.formatRelativeTimestamp(_timestamp)} (${_appState!.getPhaseFromRelativeTimestamp(_timestamp)})',
-                                style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
+                              // 时间滑块
+                              Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.blueGrey[800],
+                                  borderRadius: BorderRadius.circular(8),
+                                  border:
+                                      Border.all(color: Colors.blueGrey[600]!),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      '${_appState!.formatRelativeTimestamp(_timestamp)} (${_appState!.getPhaseFromRelativeTimestamp(_timestamp)})',
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    SliderTheme(
+                                      data: SliderTheme.of(context).copyWith(
+                                        activeTrackColor: Colors.blue[600],
+                                        inactiveTrackColor:
+                                            Colors.blueGrey[600],
+                                        thumbColor: Colors.blue[400],
+                                        overlayColor:
+                                            Colors.blue[400]!.withOpacity(0.3),
+                                        valueIndicatorColor: Colors.blue[700],
+                                      ),
+                                      child: Slider(
+                                        value: _timestamp.toDouble(),
+                                        min: 0,
+                                        max: 150000, // 2分30秒
+                                        divisions: 150, // 每秒一个刻度
+                                        label: _appState!
+                                            .formatRelativeTimestamp(
+                                                _timestamp),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _timestamp = value.round();
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
+                              const SizedBox(height: 16),
+
+                              // 快速调整按钮组
+                              const Text('快速调整:',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.w500)),
                               const SizedBox(height: 8),
-                              SliderTheme(
-                                data: SliderTheme.of(context).copyWith(
-                                  activeTrackColor: Colors.blue[600],
-                                  inactiveTrackColor: Colors.blueGrey[600],
-                                  thumbColor: Colors.blue[400],
-                                  overlayColor:
-                                      Colors.blue[400]!.withOpacity(0.3),
-                                  valueIndicatorColor: Colors.blue[700],
-                                ),
-                                child: Slider(
-                                  value: _timestamp.toDouble(),
-                                  min: 0,
-                                  max: 150000, // 2分30秒
-                                  divisions: 150, // 每秒一个刻度
-                                  label: _appState!
-                                      .formatRelativeTimestamp(_timestamp),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _timestamp = value.round();
-                                    });
-                                  },
-                                ),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: [
+                                  // 大幅度调整
+                                  _buildAdjustButton(
+                                      '-30秒', -30000, Icons.fast_rewind),
+                                  _buildAdjustButton(
+                                      '-10秒', -10000, Icons.skip_previous),
+                                  _buildAdjustButton(
+                                      '-5秒', -5000, Icons.replay_5),
+                                  // 小幅度调整
+                                  _buildAdjustButton(
+                                      '-1秒', -1000, Icons.remove),
+                                  _buildAdjustButton('+1秒', 1000, Icons.add),
+                                  // 大幅度调整
+                                  _buildAdjustButton(
+                                      '+5秒', 5000, Icons.forward_5),
+                                  _buildAdjustButton(
+                                      '+10秒', 10000, Icons.skip_next),
+                                  _buildAdjustButton(
+                                      '+30秒', 30000, Icons.fast_forward),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 16),
+                            ]))
+                  ],
+                ),
+              ),
+      ),
+    );
+  }
 
-                        // 快速调整按钮组
-                        const Text('快速调整:',
-                            style: TextStyle(fontWeight: FontWeight.w500)),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: [
-                            // 大幅度调整
-                            _buildAdjustButton(
-                                '-30秒', -30000, Icons.fast_rewind),
-                            _buildAdjustButton(
-                                '-10秒', -10000, Icons.skip_previous),
-                            _buildAdjustButton('-5秒', -5000, Icons.replay_5),
-                            // 小幅度调整
-                            _buildAdjustButton('-1秒', -1000, Icons.remove),
-                            _buildAdjustButton('+1秒', 1000, Icons.add),
-                            // 大幅度调整
-                            _buildAdjustButton('+5秒', 5000, Icons.forward_5),
-                            _buildAdjustButton('+10秒', 10000, Icons.skip_next),
-                            _buildAdjustButton(
-                                '+30秒', 30000, Icons.fast_forward),
-                          ],
-                        ),
-                      ]))
-            ],
-          ),
+  // 构建start类型action的警告信息
+  Widget _buildStartActionWarning() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.warning_amber_rounded,
+              size: 64,
+              color: Colors.orange,
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              '无法编辑START类型动作',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.orange,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'START类型的动作只能通过专门的开始按钮创建，\n不能通过编辑页面修改。',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton.icon(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.arrow_back),
+              label: const Text('返回'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -171,53 +171,63 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
                           );
                         },
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  EditActionPage(action: action, index: index),
-                            ),
-                          );
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () async {
-                          final confirmDelete = await showDialog<bool>(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text('Confirm Delete'),
-                                content: const Text(
-                                    'Are you sure you want to delete this action?'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: const Text('Cancel'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop(false);
-                                    },
-                                  ),
-                                  TextButton(
-                                    child: const Text('Delete'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop(true);
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                          if (confirmDelete == true) {
-                            appStateProvider.deleteAction(index);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Action deleted')),
+                      // 只有非start类型的action才显示编辑按钮
+                      if (action.type != 'start')
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditActionPage(
+                                    action: action, index: index),
+                              ),
                             );
-                          }
-                        },
-                      ),
+                          },
+                        ),
+                      // 只有非start类型的action才显示删除按钮
+                      if (action.type != 'start')
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () async {
+                            final confirmDelete = await showDialog<bool>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('确认删除'),
+                                  content: const Text('你确定要删除这个动作吗？'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: const Text('取消'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop(false);
+                                      },
+                                    ),
+                                    TextButton(
+                                      child: const Text('删除'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop(true);
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                            if (confirmDelete == true) {
+                              appStateProvider.deleteAction(index);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('动作已删除')),
+                              );
+                            }
+                          },
+                        ),
+                      // 如果是start类型，显示锁定图标表示不可编辑
+                      if (action.type == 'start')
+                        const Icon(
+                          Icons.lock,
+                          color: Colors.grey,
+                          size: 20,
+                        ),
                     ],
                   ),
                   onLongPress: () {
