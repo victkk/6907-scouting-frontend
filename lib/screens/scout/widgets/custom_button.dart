@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // 添加触觉反馈和音效支持
 import '../../../providers/scout_state_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../theme/app_theme.dart';
@@ -17,6 +18,8 @@ class CustomButton extends StatefulWidget {
   final bool isEnabled;
   final bool useGradient;
   final bool isImportant;
+  final bool enableHapticFeedback;
+  final bool enableSoundFeedback;
 
   const CustomButton({
     super.key,
@@ -33,6 +36,8 @@ class CustomButton extends StatefulWidget {
     this.isEnabled = true,
     this.useGradient = false,
     this.isImportant = false,
+    this.enableHapticFeedback = true,
+    this.enableSoundFeedback = true,
   });
 
   @override
@@ -40,30 +45,65 @@ class CustomButton extends StatefulWidget {
 }
 
 class _CustomButtonState extends State<CustomButton>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _animationController;
+  late AnimationController _rippleController;
   late Animation<double> _scaleAnimation;
+  late Animation<double> _shadowAnimation;
+  late Animation<double> _elevationAnimation;
+  late Animation<double> _rippleAnimation;
   bool _isPressed = false;
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 150),
+      duration: const Duration(milliseconds: 120),
       vsync: this,
     );
+
+    _rippleController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
     _scaleAnimation = Tween<double>(
       begin: 1.0,
-      end: 0.95,
+      end: 0.93,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
+    ));
+
+    _shadowAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.4,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+
+    _elevationAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.3,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+
+    _rippleAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _rippleController,
+      curve: Curves.easeOut,
     ));
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    _rippleController.dispose();
     super.dispose();
   }
 
@@ -91,18 +131,66 @@ class _CustomButtonState extends State<CustomButton>
     return widget.textColor ?? AppTheme.textPrimary;
   }
 
+  void _handleTapDown() {
+    if (!widget.isEnabled) return;
+
+    setState(() => _isPressed = true);
+    _animationController.forward();
+    _rippleController.forward();
+
+    // 增强的触觉反馈
+    if (widget.enableHapticFeedback) {
+      HapticFeedback.lightImpact();
+    }
+
+    // 音效反馈
+    if (widget.enableSoundFeedback) {
+      SystemSound.play(SystemSoundType.click);
+    }
+  }
+
+  void _handleTapUp() {
+    if (!widget.isEnabled) return;
+
+    setState(() => _isPressed = false);
+    _animationController.reverse();
+
+    // 延迟重置涟漪效果
+    Future.delayed(const Duration(milliseconds: 200), () {
+      if (mounted) {
+        _rippleController.reset();
+      }
+    });
+  }
+
+  void _handleTap() {
+    if (!widget.isEnabled) return;
+
+    // 额外的触觉反馈
+    if (widget.enableHapticFeedback) {
+      HapticFeedback.mediumImpact();
+    }
+
+    if (widget.onPressedCallback != null) {
+      widget.onPressedCallback!();
+    }
+    // 记录按钮按下的信息
+    Provider.of<AppStateProvider>(context, listen: false)
+        .recordButtonPress(widget.id);
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final isSmallScreen = screenSize.width < 4000; // 判断是否为小屏幕
 
     return AnimatedBuilder(
-      animation: _scaleAnimation,
+      animation: Listenable.merge([_animationController, _rippleController]),
       builder: (context, child) {
         return Transform.scale(
           scale: _scaleAnimation.value,
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 100), // 加快状态变化响应
+            duration: const Duration(milliseconds: 80), // 更快的状态变化响应
             width: widget.width,
             height: widget.height,
             decoration: BoxDecoration(
@@ -111,14 +199,25 @@ class _CustomButtonState extends State<CustomButton>
               boxShadow: widget.isEnabled
                   ? [
                       BoxShadow(
-                        color: _getBackgroundColor().withOpacity(0.3),
-                        blurRadius: isSmallScreen ? 6 : 12, // 减少阴影
-                        offset: Offset(0, isSmallScreen ? 3 : 6), // 减少偏移
+                        color: _getBackgroundColor()
+                            .withOpacity(0.4 * _shadowAnimation.value),
+                        blurRadius: (isSmallScreen ? 8 : 16) *
+                            _shadowAnimation.value, // 增强阴影
+                        spreadRadius: 2 * _shadowAnimation.value,
+                        offset: Offset(
+                            0,
+                            (isSmallScreen ? 4 : 8) *
+                                _elevationAnimation.value), // 增强偏移
                       ),
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: isSmallScreen ? 4 : 8, // 减少阴影
-                        offset: Offset(0, isSmallScreen ? 1 : 2), // 减少偏移
+                        color: Colors.black
+                            .withOpacity(0.15 * _shadowAnimation.value),
+                        blurRadius: (isSmallScreen ? 6 : 12) *
+                            _shadowAnimation.value, // 增强阴影
+                        offset: Offset(
+                            0,
+                            (isSmallScreen ? 2 : 4) *
+                                _elevationAnimation.value), // 增强偏移
                       ),
                     ]
                   : [
@@ -131,91 +230,130 @@ class _CustomButtonState extends State<CustomButton>
             ),
             child: Material(
               color: Colors.transparent,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 80), // 更快的颜色变化
-                decoration: BoxDecoration(
-                  gradient: widget.useGradient && widget.isEnabled
-                      ? LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: widget.isImportant
-                              ? [AppTheme.accentColor, AppTheme.accentDark]
-                              : [AppTheme.primaryColor, AppTheme.primaryDark],
-                        )
-                      : null,
-                  color: widget.useGradient ? null : _getBackgroundColor(),
-                  borderRadius:
-                      BorderRadius.circular(isSmallScreen ? 8 : 16), // 进一步减少圆角
-                  border: Border.all(
-                    color: widget.isEnabled
-                        ? _getBackgroundColor().withOpacity(0.3)
-                        : AppTheme.borderColor,
-                    width: 1,
-                  ),
-                ),
-                child: InkWell(
-                  onTap: widget.isEnabled
-                      ? () {
-                          if (widget.onPressedCallback != null) {
-                            widget.onPressedCallback!();
-                          }
-                          // 记录按钮按下的信息
-                          Provider.of<AppStateProvider>(context, listen: false)
-                              .recordButtonPress(widget.id);
-                        }
-                      : null,
-                  onTapDown: widget.isEnabled
-                      ? (_) {
-                          setState(() => _isPressed = true);
-                          _animationController.forward();
-                        }
-                      : null,
-                  onTapUp: widget.isEnabled
-                      ? (_) {
-                          setState(() => _isPressed = false);
-                          _animationController.reverse();
-                        }
-                      : null,
-                  onTapCancel: widget.isEnabled
-                      ? () {
-                          setState(() => _isPressed = false);
-                          _animationController.reverse();
-                        }
-                      : null,
-                  borderRadius:
-                      BorderRadius.circular(isSmallScreen ? 8 : 16), // 进一步减少圆角
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: isSmallScreen ? 6 : 16, // 进一步减少padding
-                        vertical: isSmallScreen ? 4 : 12), // 进一步减少padding
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (widget.icon != null) ...[
-                          Icon(
-                            widget.icon,
-                            color: _getTextColor(),
-                            size: isSmallScreen ? 12 : 20, // 进一步减少图标大小
-                          ),
-                          SizedBox(width: isSmallScreen ? 3 : 8), // 进一步减少间距
-                        ],
-                        Flexible(
-                          child: Text(
-                            widget.label,
-                            style: TextStyle(
-                              color: _getTextColor(),
-                              fontSize: isSmallScreen ? 9 : 14, // 进一步减少字体大小
-                              fontWeight: FontWeight.w600,
-                            ),
-                            textAlign: TextAlign.center,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: isSmallScreen ? 1 : 2, // 小屏幕只显示一行
-                          ),
+              child: Stack(
+                children: [
+                  // 主按钮容器 - 整个区域可点击
+                  InkWell(
+                    onTap: _handleTap,
+                    onTapDown: (_) => _handleTapDown(),
+                    onTapUp: (_) => _handleTapUp(),
+                    onTapCancel: _handleTapUp,
+                    borderRadius: BorderRadius.circular(
+                        isSmallScreen ? 8 : 16), // 进一步减少圆角
+                    splashColor: Colors.white.withOpacity(0.3),
+                    highlightColor: Colors.white.withOpacity(0.1),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 60), // 更快的颜色变化
+                      width: double.infinity,
+                      height: double.infinity,
+                      decoration: BoxDecoration(
+                        gradient: widget.useGradient && widget.isEnabled
+                            ? LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: widget.isImportant
+                                    ? [
+                                        AppTheme.accentColor.withOpacity(
+                                            _isPressed ? 0.9 : 1.0),
+                                        AppTheme.accentDark
+                                            .withOpacity(_isPressed ? 0.8 : 1.0)
+                                      ]
+                                    : [
+                                        AppTheme.primaryColor.withOpacity(
+                                            _isPressed ? 0.9 : 1.0),
+                                        AppTheme.primaryDark
+                                            .withOpacity(_isPressed ? 0.8 : 1.0)
+                                      ],
+                              )
+                            : null,
+                        color: widget.useGradient
+                            ? null
+                            : _getBackgroundColor()
+                                .withOpacity(_isPressed ? 0.9 : 1.0),
+                        borderRadius: BorderRadius.circular(
+                            isSmallScreen ? 8 : 16), // 进一步减少圆角
+                        border: Border.all(
+                          color: widget.isEnabled
+                              ? _getBackgroundColor()
+                                  .withOpacity(_isPressed ? 0.5 : 0.3)
+                              : AppTheme.borderColor,
+                          width: _isPressed ? 2.0 : 1.0, // 按压时加粗边框
                         ),
-                      ],
+                      ),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: isSmallScreen ? 6 : 16, // 进一步减少padding
+                            vertical: isSmallScreen ? 4 : 12), // 进一步减少padding
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (widget.icon != null) ...[
+                              AnimatedContainer(
+                                duration: const Duration(milliseconds: 120),
+                                transform: Matrix4.identity()
+                                  ..scale(_isPressed ? 0.9 : 1.0),
+                                child: Icon(
+                                  widget.icon,
+                                  color: _getTextColor(),
+                                  size: isSmallScreen ? 12 : 20, // 进一步减少图标大小
+                                ),
+                              ),
+                              SizedBox(width: isSmallScreen ? 3 : 8), // 进一步减少间距
+                            ],
+                            Flexible(
+                              child: AnimatedDefaultTextStyle(
+                                duration: const Duration(milliseconds: 120),
+                                style: TextStyle(
+                                  color: _getTextColor(),
+                                  fontSize: isSmallScreen ? 9 : 14, // 进一步减少字体大小
+                                  fontWeight: FontWeight.w600,
+                                  shadows: _isPressed
+                                      ? [
+                                          Shadow(
+                                            color:
+                                                Colors.black.withOpacity(0.3),
+                                            blurRadius: 2,
+                                            offset: const Offset(1, 1),
+                                          ),
+                                        ]
+                                      : null,
+                                ),
+                                child: Text(
+                                  widget.label,
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: isSmallScreen ? 1 : 2, // 小屏幕只显示一行
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
+
+                  // 涟漪效果覆盖层
+                  if (_rippleAnimation.value > 0)
+                    Positioned.fill(
+                      child: ClipRRect(
+                        borderRadius:
+                            BorderRadius.circular(isSmallScreen ? 8 : 16),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: RadialGradient(
+                              center: Alignment.center,
+                              radius: _rippleAnimation.value,
+                              colors: [
+                                Colors.white.withOpacity(
+                                    0.3 * (1 - _rippleAnimation.value)),
+                                Colors.transparent,
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           ),

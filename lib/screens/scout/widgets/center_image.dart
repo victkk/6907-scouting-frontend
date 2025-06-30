@@ -83,57 +83,61 @@ class CenterImage extends StatelessWidget {
     return [
       Positioned(
         top: height * 0.01,
+        bottom: height * 0.01,
         left: width * 0.75,
-        child: CustomButton(
-          id: 'Auto 1',
-          label: 'Auto 1',
-          width: width * 0.23,
-          height: height * 0.18,
-          backgroundColor: Colors.blue[700],
-        ),
-      ),
-      Positioned(
-        top: height * 0.2,
-        left: width * 0.75,
-        child: CustomButton(
-          id: 'Auto 2',
-          label: 'Auto 2',
-          width: width * 0.23,
-          height: height * 0.18,
-          backgroundColor: Colors.blue[700],
-        ),
-      ),
-      Positioned(
-        top: height * 0.4,
-        left: width * 0.75,
-        child: CustomButton(
-          id: 'Auto 3',
-          label: 'Auto 3',
-          width: width * 0.23,
-          height: height * 0.18,
-          backgroundColor: Colors.blue[700],
-        ),
-      ),
-      Positioned(
-        top: height * 0.6,
-        left: width * 0.75,
-        child: CustomButton(
-          id: 'Auto 4',
-          label: 'Auto 4',
-          width: width * 0.23,
-          height: height * 0.18,
-          backgroundColor: Colors.blue[700],
-        ),
-      ),
-      Positioned(
-        top: height * 0.8,
-        left: width * 0.75,
-        child: CustomButton(
-          id: 'Auto 5',
-          label: 'Auto 5',
-          width: width * 0.23,
-          height: height * 0.18,
-          backgroundColor: Colors.blue[700],
+        width: width * 0.23,
+        child: Column(
+          children: [
+            Expanded(
+              child: CustomButton(
+                id: 'Auto 1',
+                label: 'Auto 1',
+                width: double.infinity,
+                height: double.infinity,
+                backgroundColor: Colors.blue[700],
+              ),
+            ),
+            SizedBox(height: height * 0.01), // 小间距
+            Expanded(
+              child: CustomButton(
+                id: 'Auto 2',
+                label: 'Auto 2',
+                width: double.infinity,
+                height: double.infinity,
+                backgroundColor: Colors.blue[700],
+              ),
+            ),
+            SizedBox(height: height * 0.01), // 小间距
+            Expanded(
+              child: CustomButton(
+                id: 'Auto 3',
+                label: 'Auto 3',
+                width: double.infinity,
+                height: double.infinity,
+                backgroundColor: Colors.blue[700],
+              ),
+            ),
+            SizedBox(height: height * 0.01), // 小间距
+            Expanded(
+              child: CustomButton(
+                id: 'Auto 4',
+                label: 'Auto 4',
+                width: double.infinity,
+                height: double.infinity,
+                backgroundColor: Colors.blue[700],
+              ),
+            ),
+            SizedBox(height: height * 0.01), // 小间距
+            Expanded(
+              child: CustomButton(
+                id: 'Auto 5',
+                label: 'Auto 5',
+                width: double.infinity,
+                height: double.infinity,
+                backgroundColor: Colors.blue[700],
+              ),
+            ),
+          ],
         ),
       ),
     ];
