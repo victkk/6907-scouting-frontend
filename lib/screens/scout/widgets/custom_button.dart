@@ -131,6 +131,30 @@ class _CustomButtonState extends State<CustomButton>
     return widget.textColor ?? AppTheme.textPrimary;
   }
 
+  // 获取按压时的背景颜色
+  Color _getPressedBackgroundColor() {
+    if (!widget.isEnabled) {
+      return widget.disabledBackgroundColor ?? AppTheme.textDisabled;
+    }
+
+    final baseColor = widget.backgroundColor ??
+        (widget.isImportant ? AppTheme.accentColor : AppTheme.primaryColor);
+
+    // 按压时使用更深的颜色
+    return Color.lerp(baseColor, Colors.black, 0.2) ?? baseColor;
+  }
+
+  // 获取按压时的文字颜色
+  Color _getPressedTextColor() {
+    if (!widget.isEnabled) {
+      return widget.disabledTextColor ?? AppTheme.textDisabled;
+    }
+
+    // 按压时文字稍微变亮一点
+    final baseColor = widget.textColor ?? AppTheme.textPrimary;
+    return Color.lerp(baseColor, Colors.white, 0.2) ?? baseColor;
+  }
+
   void _handleTapDown() {
     if (!widget.isEnabled) return;
 
@@ -243,7 +267,7 @@ class _CustomButtonState extends State<CustomButton>
                     splashColor: Colors.white.withOpacity(0.3),
                     highlightColor: Colors.white.withOpacity(0.1),
                     child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 60), // 更快的颜色变化
+                      duration: const Duration(milliseconds: 40), // 更快的颜色变化
                       width: double.infinity,
                       height: double.infinity,
                       decoration: BoxDecoration(
@@ -251,33 +275,45 @@ class _CustomButtonState extends State<CustomButton>
                             ? LinearGradient(
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
-                                colors: widget.isImportant
-                                    ? [
-                                        AppTheme.accentColor.withOpacity(
-                                            _isPressed ? 0.9 : 1.0),
-                                        AppTheme.accentDark
-                                            .withOpacity(_isPressed ? 0.8 : 1.0)
-                                      ]
-                                    : [
-                                        AppTheme.primaryColor.withOpacity(
-                                            _isPressed ? 0.9 : 1.0),
-                                        AppTheme.primaryDark
-                                            .withOpacity(_isPressed ? 0.8 : 1.0)
-                                      ],
+                                colors: _isPressed
+                                    ? widget.isImportant
+                                        ? [
+                                            Color.lerp(AppTheme.accentColor,
+                                                Colors.black, 0.25)!,
+                                            Color.lerp(AppTheme.accentDark,
+                                                Colors.black, 0.25)!
+                                          ]
+                                        : [
+                                            Color.lerp(AppTheme.primaryColor,
+                                                Colors.black, 0.25)!,
+                                            Color.lerp(AppTheme.primaryDark,
+                                                Colors.black, 0.25)!
+                                          ]
+                                    : widget.isImportant
+                                        ? [
+                                            AppTheme.accentColor,
+                                            AppTheme.accentDark
+                                          ]
+                                        : [
+                                            AppTheme.primaryColor,
+                                            AppTheme.primaryDark
+                                          ],
                               )
                             : null,
                         color: widget.useGradient
                             ? null
-                            : _getBackgroundColor()
-                                .withOpacity(_isPressed ? 0.9 : 1.0),
+                            : _isPressed
+                                ? _getPressedBackgroundColor()
+                                : _getBackgroundColor(),
                         borderRadius: BorderRadius.circular(
                             isSmallScreen ? 8 : 16), // 进一步减少圆角
                         border: Border.all(
                           color: widget.isEnabled
-                              ? _getBackgroundColor()
-                                  .withOpacity(_isPressed ? 0.5 : 0.3)
+                              ? (_isPressed
+                                  ? Colors.white.withOpacity(0.6)
+                                  : _getBackgroundColor().withOpacity(0.3))
                               : AppTheme.borderColor,
-                          width: _isPressed ? 2.0 : 1.0, // 按压时加粗边框
+                          width: _isPressed ? 2.5 : 1.0, // 按压时加粗边框并变色
                         ),
                       ),
                       child: Container(
@@ -289,12 +325,14 @@ class _CustomButtonState extends State<CustomButton>
                           children: [
                             if (widget.icon != null) ...[
                               AnimatedContainer(
-                                duration: const Duration(milliseconds: 120),
+                                duration: const Duration(milliseconds: 60),
                                 transform: Matrix4.identity()
                                   ..scale(_isPressed ? 0.9 : 1.0),
                                 child: Icon(
                                   widget.icon,
-                                  color: _getTextColor(),
+                                  color: _isPressed
+                                      ? _getPressedTextColor()
+                                      : _getTextColor(),
                                   size: isSmallScreen ? 12 : 20, // 进一步减少图标大小
                                 ),
                               ),
@@ -302,17 +340,19 @@ class _CustomButtonState extends State<CustomButton>
                             ],
                             Flexible(
                               child: AnimatedDefaultTextStyle(
-                                duration: const Duration(milliseconds: 120),
+                                duration: const Duration(milliseconds: 60),
                                 style: TextStyle(
-                                  color: _getTextColor(),
+                                  color: _isPressed
+                                      ? _getPressedTextColor()
+                                      : _getTextColor(),
                                   fontSize: isSmallScreen ? 9 : 14, // 进一步减少字体大小
                                   fontWeight: FontWeight.w600,
                                   shadows: _isPressed
                                       ? [
                                           Shadow(
                                             color:
-                                                Colors.black.withOpacity(0.3),
-                                            blurRadius: 2,
+                                                Colors.black.withOpacity(0.5),
+                                            blurRadius: 3,
                                             offset: const Offset(1, 1),
                                           ),
                                         ]
@@ -332,6 +372,27 @@ class _CustomButtonState extends State<CustomButton>
                     ),
                   ),
 
+                  // 按压反馈叠加层 - 更明显的点击效果
+                  if (_isPressed)
+                    Positioned.fill(
+                      child: ClipRRect(
+                        borderRadius:
+                            BorderRadius.circular(isSmallScreen ? 8 : 16),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 80),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.15),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.3),
+                              width: 1.0,
+                            ),
+                            borderRadius:
+                                BorderRadius.circular(isSmallScreen ? 8 : 16),
+                          ),
+                        ),
+                      ),
+                    ),
+
                   // 涟漪效果覆盖层
                   if (_rippleAnimation.value > 0)
                     Positioned.fill(
@@ -345,7 +406,7 @@ class _CustomButtonState extends State<CustomButton>
                               radius: _rippleAnimation.value,
                               colors: [
                                 Colors.white.withOpacity(
-                                    0.3 * (1 - _rippleAnimation.value)),
+                                    0.4 * (1 - _rippleAnimation.value)),
                                 Colors.transparent,
                               ],
                             ),
