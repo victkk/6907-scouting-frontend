@@ -31,9 +31,16 @@ class CoralIntakeTypes {
 /// 藻类摄取类型常量
 class AlgaeIntakeTypes {
   static const String ground = 'ground';
-
   static const String reef = 'reef';
   static const List<String> all = [ground, reef];
+}
+
+/// Ground Algae 来源类型常量
+class GroundAlgaeSources {
+  static const String front = 'front'; // 前
+  static const String middle = 'middle'; // 中
+  static const String back = 'back'; // 后
+  static const List<String> all = [front, middle, back];
 }
 
 /// 珊瑚得分类型常量
@@ -48,9 +55,10 @@ class CoralScoreTypes {
 /// 藻类得分类型常量
 class AlgaeScoreTypes {
   static const String processor = 'processor';
-
   static const String net = 'net';
-  static const List<String> all = [net, processor];
+  static const String tactical = 'tactical'; // 战术
+  static const String shooting = 'shooting'; // 射球
+  static const List<String> all = [net, processor, tactical, shooting];
 }
 
 /// 自动阶段起始位置

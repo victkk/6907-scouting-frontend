@@ -11,6 +11,9 @@ class ScoutingAction {
   final int? face;
   final bool? success;
 
+  // ground algae 来源信息
+  final String? groundAlgaeSource; // 前/中/后
+
   // score coral 类型的详细信息
   final bool stacking; // 叠筒
   final bool scraping; // 刮球
@@ -25,6 +28,7 @@ class ScoutingAction {
     this.scoreAlgaeType,
     this.face,
     this.success,
+    this.groundAlgaeSource,
     this.stacking = false,
     this.scraping = false,
     this.defended = false,
@@ -41,6 +45,7 @@ class ScoutingAction {
       scoreAlgaeType: json['score algae type'],
       face: json['face'],
       success: json['success'],
+      groundAlgaeSource: json['ground algae source'],
       stacking: json['stacking'] ?? false,
       scraping: json['scraping'] ?? false,
       defended: json['defended'] ?? false,
@@ -60,6 +65,9 @@ class ScoutingAction {
     }
     if (type == 'intake algae' && intakeAlgaeType != null) {
       data['intake algae type'] = intakeAlgaeType;
+      if (groundAlgaeSource != null) {
+        data['ground algae source'] = groundAlgaeSource;
+      }
     }
     if (type == 'score coral') {
       if (scoreCoralType != null) data['score coral type'] = scoreCoralType;
@@ -87,6 +95,7 @@ class ScoutingAction {
     String? scoreAlgaeType,
     int? face,
     bool? success,
+    String? groundAlgaeSource,
     bool? stacking,
     bool? scraping,
     bool? defended,
@@ -100,6 +109,7 @@ class ScoutingAction {
       scoreAlgaeType: scoreAlgaeType ?? this.scoreAlgaeType,
       face: face ?? this.face,
       success: success ?? this.success,
+      groundAlgaeSource: groundAlgaeSource ?? this.groundAlgaeSource,
       stacking: stacking ?? this.stacking,
       scraping: scraping ?? this.scraping,
       defended: defended ?? this.defended,
@@ -135,11 +145,13 @@ class ScoutingAction {
   }
 
   /// 工厂方法 - 创建摄取藻类动作
-  static ScoutingAction intakeAlgae(String type, {int? timestamp}) {
+  static ScoutingAction intakeAlgae(String type,
+      {int? timestamp, String? groundSource}) {
     return ScoutingAction(
       type: 'intake algae',
       timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch,
       intakeAlgaeType: type,
+      groundAlgaeSource: groundSource,
     );
   }
 

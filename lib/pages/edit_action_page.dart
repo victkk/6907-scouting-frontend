@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:horus/models/action.dart'; // ScoutingAction
+import 'package:horus/models/action_constants.dart'; // GroundAlgaeSources
 import 'package:horus/providers/scout_state_provider.dart';
 import 'package:horus/models/scout_state.dart'; // AppState
 import 'package:provider/provider.dart';
@@ -27,6 +28,7 @@ class _EditActionPageState extends State<EditActionPage> {
   int? _face;
   String? _faceDisplay; // 用于显示的面部选项
   bool? _success;
+  String? _groundAlgaeSource; // Ground Algae 来源
   bool _stacking = false; // 叠筒
   bool _scraping = false; // 刮球
   bool _defended = false; // 被防守
@@ -55,7 +57,15 @@ class _EditActionPageState extends State<EditActionPage> {
   // 定义所有可能的 score coral type
   final List<String> _scoreCoralTypes = ['L1', 'L2', 'L3', 'L4'];
   // 定义所有可能的 score algae type
-  final List<String> _scoreAlgaeTypes = ['net', 'processor'];
+  final List<String> _scoreAlgaeTypes = [
+    'net',
+    'processor',
+    'tactical',
+    'shooting'
+  ];
+
+  // 定义 Ground Algae 来源选项
+  final List<String> _groundAlgaeSources = GroundAlgaeSources.all;
 
   // 面部选项映射：显示文本 -> 数字值
   final Map<String, int> _faceOptions = {
@@ -92,6 +102,7 @@ class _EditActionPageState extends State<EditActionPage> {
       _scoreAlgaeType = widget.action!.scoreAlgaeType;
       _face = widget.action!.face;
       _success = widget.action!.success;
+      _groundAlgaeSource = widget.action!.groundAlgaeSource;
       _stacking = widget.action!.stacking;
       _scraping = widget.action!.scraping;
       _defended = widget.action!.defended;
@@ -122,6 +133,7 @@ class _EditActionPageState extends State<EditActionPage> {
         scoreAlgaeType: _scoreAlgaeType,
         face: _face,
         success: _success,
+        groundAlgaeSource: _groundAlgaeSource,
         stacking: _stacking,
         scraping: _scraping,
         defended: _defended,
@@ -184,6 +196,7 @@ class _EditActionPageState extends State<EditActionPage> {
                           _face = null;
                           _faceDisplay = null;
                           _success = null;
+                          _groundAlgaeSource = null;
                           _stacking = false;
                           _scraping = false;
                           _defended = false;
@@ -209,7 +222,7 @@ class _EditActionPageState extends State<EditActionPage> {
                         validator: (value) =>
                             value == null ? 'Please select a type' : null,
                       ),
-                    if (_type == 'intake algae')
+                    if (_type == 'intake algae') ...[
                       DropdownButtonFormField<String>(
                         value: _intakeAlgaeType,
                         decoration: const InputDecoration(
@@ -223,11 +236,51 @@ class _EditActionPageState extends State<EditActionPage> {
                         onChanged: (String? newValue) {
                           setState(() {
                             _intakeAlgaeType = newValue;
+                            // 如果不是ground类型，清空来源选择
+                            if (newValue != 'ground') {
+                              _groundAlgaeSource = null;
+                            }
                           });
                         },
                         validator: (value) =>
                             value == null ? 'Please select a type' : null,
                       ),
+
+                      // 只有选择了ground类型时才显示来源选择
+                      if (_intakeAlgaeType == 'ground')
+                        DropdownButtonFormField<String>(
+                          value: _groundAlgaeSource,
+                          decoration: const InputDecoration(
+                              labelText: 'Ground Algae Source (来源)'),
+                          items: _groundAlgaeSources.map((String value) {
+                            String displayText;
+                            switch (value) {
+                              case GroundAlgaeSources.front:
+                                displayText = '前 (Front)';
+                                break;
+                              case GroundAlgaeSources.middle:
+                                displayText = '中 (Middle)';
+                                break;
+                              case GroundAlgaeSources.back:
+                                displayText = '后 (Back)';
+                                break;
+                              default:
+                                displayText = value;
+                            }
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(displayText),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _groundAlgaeSource = newValue;
+                            });
+                          },
+                          validator: (value) =>
+                              value == null ? 'Please select a source' : null,
+                        ),
+                    ],
                     if (_type == 'score coral') ...[
                       DropdownButtonFormField<String>(
                         value: _scoreCoralType,
@@ -328,9 +381,26 @@ class _EditActionPageState extends State<EditActionPage> {
                         decoration: const InputDecoration(
                             labelText: 'Score Algae Type'),
                         items: _scoreAlgaeTypes.map((String value) {
+                          String displayText;
+                          switch (value) {
+                            case 'net':
+                              displayText = 'Net (普通)';
+                              break;
+                            case 'tactical':
+                              displayText = '战术 (Tactical)';
+                              break;
+                            case 'shooting':
+                              displayText = '射球 (Shooting)';
+                              break;
+                            case 'processor':
+                              displayText = 'Processor';
+                              break;
+                            default:
+                              displayText = value;
+                          }
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(value),
+                            child: Text(displayText),
                           );
                         }).toList(),
                         onChanged: (String? newValue) {

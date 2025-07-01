@@ -4,6 +4,7 @@ import '../../../providers/scout_state_provider.dart';
 import 'custom_button.dart';
 import 'package:provider/provider.dart';
 import 'hexagon_button.dart';
+import 'algae_score_menu_dialog.dart';
 
 class CenterImage extends StatelessWidget {
   const CenterImage({super.key});
@@ -29,7 +30,7 @@ class CenterImage extends StatelessWidget {
     final Map<String, List<Widget> Function(double, double)>
         modeButtonBuilders = {
       'offense': (width, height) => _buildMode1Buttons(
-          width, height, appStateProvider.selectFace, appState),
+          context, width, height, appStateProvider.selectFace, appState),
       'defense': (width, height) => _buildMode2Buttons(width, height),
       'auto': (width, height) => _buildAutoSelectButtons(width, height),
       'start': (width, height) => _buildStartButtons(width, height),
@@ -143,6 +144,20 @@ class CenterImage extends StatelessWidget {
     ];
   }
 
+  void _showAlgaeScoreMenu(BuildContext context, AppState appState) {
+    final timestamp = appState.getRelativeTimestamp();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlgaeScoreMenuDialog(
+          timestamp: timestamp,
+        );
+      },
+    );
+  }
+
   List<Widget> _buildStartButtons(double width, double height) {
     return [
       Positioned(
@@ -159,8 +174,8 @@ class CenterImage extends StatelessWidget {
     ];
   }
 
-  List<Widget> _buildMode1Buttons(double width, double height,
-      void Function(int) selectFace, AppState appState) {
+  List<Widget> _buildMode1Buttons(BuildContext context, double width,
+      double height, void Function(int) selectFace, AppState appState) {
     return [
       Positioned(
         top: height * 0.02,
@@ -183,6 +198,9 @@ class CenterImage extends StatelessWidget {
           height: height * 0.4514,
           backgroundColor: Colors.blue[700],
           isEnabled: appState.hasAlgae,
+          onLongPressCallback: appState.hasAlgae
+              ? () => _showAlgaeScoreMenu(context, appState)
+              : null,
         ),
       ),
       Positioned(
@@ -197,15 +215,47 @@ class CenterImage extends StatelessWidget {
           isEnabled: appState.hasAlgae,
         ),
       ),
+      // Ground Algae 按钮组 (前中后)
       Positioned(
         top: height * 0.00,
         left: width * 0.536,
-        child: CustomButton(
-          id: 'Ground Algae',
-          label: 'Ground Algae',
-          width: width * 0.3,
-          height: height * 0.3,
-          backgroundColor: Colors.blue[700],
+        width: width * 0.3,
+        height: height * 0.3,
+        child: Row(
+          children: [
+            // 前
+            Expanded(
+              child: CustomButton(
+                id: 'Ground Algae Front',
+                label: 'Ground Algae',
+                width: double.infinity,
+                height: double.infinity,
+                backgroundColor: Colors.blue[700],
+              ),
+            ),
+            SizedBox(width: width * 0.005), // 小间距
+            // 中
+            Expanded(
+              child: CustomButton(
+                id: 'Ground Algae Middle',
+                label: 'Ground Algae',
+                width: double.infinity,
+                height: double.infinity,
+                backgroundColor: Colors.blue[700],
+              ),
+            ),
+            SizedBox(width: width * 0.005), // 小间距
+            // 后
+            Expanded(
+              child: CustomButton(
+                id: 'Ground Algae Back',
+                label: 'Ground Algae',
+                width: double.infinity,
+                height: double.infinity,
+                backgroundColor: Colors.blue[700],
+              ),
+            ),
+          ],
         ),
       ),
       Positioned(

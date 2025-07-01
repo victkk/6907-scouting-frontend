@@ -345,11 +345,26 @@ class AppState {
         matchRecord.addAction(ScoutingAction.intakeAlgae(AlgaeIntakeTypes.reef,
             timestamp: relativeTimestamp));
         break;
-      case "Ground Algae":
+      case "Ground Algae Front":
         hasAlgae = true;
         matchRecord.addAction(ScoutingAction.intakeAlgae(
             AlgaeIntakeTypes.ground,
-            timestamp: relativeTimestamp));
+            timestamp: relativeTimestamp,
+            groundSource: GroundAlgaeSources.front));
+        break;
+      case "Ground Algae Middle":
+        hasAlgae = true;
+        matchRecord.addAction(ScoutingAction.intakeAlgae(
+            AlgaeIntakeTypes.ground,
+            timestamp: relativeTimestamp,
+            groundSource: GroundAlgaeSources.middle));
+        break;
+      case "Ground Algae Back":
+        hasAlgae = true;
+        matchRecord.addAction(ScoutingAction.intakeAlgae(
+            AlgaeIntakeTypes.ground,
+            timestamp: relativeTimestamp,
+            groundSource: GroundAlgaeSources.back));
         break;
       case "Ground Coral":
         hasCoral = true;
@@ -374,6 +389,20 @@ class AppState {
         hasAlgae = false;
         matchRecord.addAction(ScoutingAction.scoreAlgae(
             AlgaeScoreTypes.net, true,
+            timestamp: relativeTimestamp));
+        break;
+      case "Tactical":
+        assert(hasAlgae == true, "!score when no algae");
+        hasAlgae = false;
+        matchRecord.addAction(ScoutingAction.scoreAlgae(
+            AlgaeScoreTypes.tactical, true,
+            timestamp: relativeTimestamp));
+        break;
+      case "Shooting":
+        assert(hasAlgae == true, "!score when no algae");
+        hasAlgae = false;
+        matchRecord.addAction(ScoutingAction.scoreAlgae(
+            AlgaeScoreTypes.shooting, true,
             timestamp: relativeTimestamp));
         break;
       case "Processor":

@@ -48,13 +48,61 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
       subtitles.add(Text('珊瑚类型: ${action.intakeCoralType}'));
     }
     if (action.intakeAlgaeType != null) {
-      subtitles.add(Text('藻类类型: ${action.intakeAlgaeType}'));
+      String algaeTypeText = '藻类类型: ${action.intakeAlgaeType}';
+      // 如果是ground algae并且有来源信息，显示来源
+      if (action.intakeAlgaeType == 'ground' &&
+          action.groundAlgaeSource != null) {
+        String sourceText;
+        switch (action.groundAlgaeSource!) {
+          case 'front':
+            sourceText = '前';
+            break;
+          case 'middle':
+            sourceText = '中';
+            break;
+          case 'back':
+            sourceText = '后';
+            break;
+          default:
+            sourceText = action.groundAlgaeSource!;
+        }
+        algaeTypeText += ' (来源: $sourceText)';
+      }
+      subtitles.add(Text(algaeTypeText));
     }
     if (action.scoreCoralType != null) {
       subtitles.add(Text('得分珊瑚类型: ${action.scoreCoralType}'));
     }
     if (action.scoreAlgaeType != null) {
-      subtitles.add(Text('得分藻类类型: ${action.scoreAlgaeType}'));
+      String algaeScoreText = '得分藻类类型: ';
+      switch (action.scoreAlgaeType!) {
+        case 'net':
+          algaeScoreText += 'Net (普通)';
+          break;
+        case 'tactical':
+          algaeScoreText += '战术 (Tactical)';
+          break;
+        case 'shooting':
+          algaeScoreText += '射球 (Shooting)';
+          break;
+        case 'processor':
+          algaeScoreText += 'Processor';
+          break;
+        default:
+          algaeScoreText += action.scoreAlgaeType!;
+      }
+      subtitles.add(Text(algaeScoreText,
+          style: TextStyle(
+            color: action.scoreAlgaeType == 'tactical'
+                ? Colors.orange
+                : action.scoreAlgaeType == 'shooting'
+                    ? Colors.red
+                    : null,
+            fontWeight: action.scoreAlgaeType == 'tactical' ||
+                    action.scoreAlgaeType == 'shooting'
+                ? FontWeight.bold
+                : FontWeight.normal,
+          )));
     }
     if (action.face != null) {
       subtitles.add(Text('朝向: ${_faceDisplayMap[action.face] ?? action.face}'));
