@@ -19,6 +19,9 @@ class ScoutingAction {
   final bool scraping; // 刮球
   final bool defended; // 被防守
 
+  // climb up 类型的详细信息
+  final String? climbResult; // 爬升结果：成功/失败/碰链子
+
   ScoutingAction({
     required this.type,
     required this.timestamp,
@@ -32,6 +35,7 @@ class ScoutingAction {
     this.stacking = false,
     this.scraping = false,
     this.defended = false,
+    this.climbResult,
   });
 
   /// 从JSON创建动作
@@ -49,6 +53,7 @@ class ScoutingAction {
       stacking: json['stacking'] ?? false,
       scraping: json['scraping'] ?? false,
       defended: json['defended'] ?? false,
+      climbResult: json['climb result'],
     );
   }
 
@@ -81,6 +86,9 @@ class ScoutingAction {
       if (scoreAlgaeType != null) data['score algae type'] = scoreAlgaeType;
       if (success != null) data['success'] = success;
     }
+    if (type == 'climb up') {
+      if (climbResult != null) data['climb result'] = climbResult;
+    }
 
     return data;
   }
@@ -99,6 +107,7 @@ class ScoutingAction {
     bool? stacking,
     bool? scraping,
     bool? defended,
+    String? climbResult,
   }) {
     return ScoutingAction(
       type: type ?? this.type,
@@ -113,6 +122,7 @@ class ScoutingAction {
       stacking: stacking ?? this.stacking,
       scraping: scraping ?? this.scraping,
       defended: defended ?? this.defended,
+      climbResult: climbResult ?? this.climbResult,
     );
   }
 
@@ -189,9 +199,10 @@ class ScoutingAction {
   }
 
   /// 工厂方法 - 创建爬升动作
-  static ScoutingAction climbUp({int? timestamp}) {
+  static ScoutingAction climbUp({int? timestamp, String? result}) {
     return ScoutingAction(
         type: 'climb up',
-        timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch);
+        timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch,
+        climbResult: result);
   }
 }

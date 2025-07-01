@@ -32,6 +32,8 @@ class _EditActionPageState extends State<EditActionPage> {
   bool _stacking = false; // 叠筒
   bool _scraping = false; // 刮球
   bool _defended = false; // 被防守
+  String? _climbResult; // 爬升结果
+
   AppState? _appState; // 添加AppState引用
 
   // 定义所有可能的 action type (除了start，start只能通过特定按钮创建)
@@ -66,6 +68,9 @@ class _EditActionPageState extends State<EditActionPage> {
 
   // 定义 Ground Algae 来源选项
   final List<String> _groundAlgaeSources = GroundAlgaeSources.all;
+
+  // 定义爬升结果选项
+  final List<String> _climbResults = ClimbResults.all;
 
   // 面部选项映射：显示文本 -> 数字值
   final Map<String, int> _faceOptions = {

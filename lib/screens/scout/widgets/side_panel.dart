@@ -7,11 +7,27 @@ import 'package:provider/provider.dart';
 import '../../../theme/app_theme.dart';
 import 'package:horus/pages/action_timeline_page.dart';
 import 'score_coral_detail_dialog.dart';
+import 'climb_result_menu_dialog.dart';
 
 class SidePanel extends StatelessWidget {
   final bool isLeftPanel;
 
   const SidePanel({super.key, required this.isLeftPanel});
+
+  /// 显示爬升结果菜单
+  void _showClimbResultMenu(BuildContext context) {
+    final appStateProvider =
+        Provider.of<AppStateProvider>(context, listen: false);
+    final timestamp = appStateProvider.appState.getRelativeTimestamp();
+
+    showDialog(
+      context: context,
+      builder: (context) => ClimbResultMenuDialog(
+        timestamp: timestamp,
+        onActionAdded: () {},
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -197,6 +213,7 @@ class SidePanel extends StatelessWidget {
                 backgroundColor: AppTheme.successColor,
                 useGradient: true,
                 isEnabled: appState.giveUp,
+                onLongPressCallback: () => _showClimbResultMenu(context),
               ),
             )
           else
@@ -209,6 +226,7 @@ class SidePanel extends StatelessWidget {
               backgroundColor: AppTheme.successColor,
               useGradient: true,
               isEnabled: appState.giveUp,
+              onLongPressCallback: () => _showClimbResultMenu(context),
             ),
         ],
       );

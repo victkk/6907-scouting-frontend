@@ -128,6 +128,39 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
             style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)));
       }
     }
+
+    // 显示 climb up 的详细信息
+    if (action.type == 'climb up' && action.climbResult != null) {
+      String resultText;
+      Color resultColor;
+      String resultIcon;
+
+      switch (action.climbResult!) {
+        case 'success':
+          resultText = '成功';
+          resultColor = Colors.green;
+          resultIcon = '✅';
+          break;
+        case 'failure':
+          resultText = '失败';
+          resultColor = Colors.red;
+          resultIcon = '❌';
+          break;
+        case 'hit_chain':
+          resultText = '碰链子';
+          resultColor = Colors.orange;
+          resultIcon = '⚠️';
+          break;
+        default:
+          resultText = action.climbResult!;
+          resultColor = Colors.grey;
+          resultIcon = '❓';
+      }
+
+      subtitles.add(Text('$resultIcon $resultText',
+          style: TextStyle(color: resultColor, fontWeight: FontWeight.bold)));
+    }
+
     return subtitles;
   }
 
@@ -215,6 +248,9 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
               itemBuilder: (context, index) {
                 final action = actions[index];
                 return ListTile(
+                  tileColor: action.type == 'give up'
+                      ? Colors.red.withOpacity(0.3)
+                      : null,
                   leading: CircleAvatar(
                     child: Text((index + 1).toString()),
                   ),

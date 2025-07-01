@@ -418,8 +418,9 @@ class AppState {
         giveUp = !giveUp;
         break;
       case "Climb Up":
-        matchRecord
-            .addAction(ScoutingAction.climbUp(timestamp: relativeTimestamp));
+        matchRecord.addAction(ScoutingAction.climbUp(
+            timestamp: relativeTimestamp,
+            result: ClimbResults.success)); // 单点默认为成功
         break;
       case "Defense":
         matchRecord

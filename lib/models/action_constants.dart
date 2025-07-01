@@ -61,6 +61,14 @@ class AlgaeScoreTypes {
   static const List<String> all = [net, processor, tactical, shooting];
 }
 
+/// 爬升结果类型常量
+class ClimbResults {
+  static const String success = 'success'; // 成功
+  static const String failure = 'failure'; // 失败
+  static const String hitChain = 'hit_chain'; // 碰链子
+  static const List<String> all = [success, failure, hitChain];
+}
+
 /// 自动阶段起始位置
 class AutoStartPositions {
   static const String pos1 = 'auto 1';
