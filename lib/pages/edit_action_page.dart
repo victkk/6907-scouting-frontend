@@ -111,6 +111,7 @@ class _EditActionPageState extends State<EditActionPage> {
       _stacking = widget.action!.stacking;
       _scraping = widget.action!.scraping;
       _defended = widget.action!.defended;
+      _climbResult = widget.action!.climbResult;
       _faceDisplay = _face != null ? _faceDisplayMap[_face] : null;
     } else {
       _type = _actionTypes.first; // 默认选择第一个类型
@@ -142,6 +143,7 @@ class _EditActionPageState extends State<EditActionPage> {
         stacking: _stacking,
         scraping: _scraping,
         defended: _defended,
+        climbResult: _climbResult,
       );
 
       if (widget.action == null) {
@@ -205,6 +207,7 @@ class _EditActionPageState extends State<EditActionPage> {
                           _stacking = false;
                           _scraping = false;
                           _defended = false;
+                          _climbResult = null;
                         });
                       },
                     ),
@@ -424,6 +427,41 @@ class _EditActionPageState extends State<EditActionPage> {
                             _success = value;
                           });
                         },
+                      ),
+                    ],
+                    if (_type == 'climb up') ...[
+                      DropdownButtonFormField<String>(
+                        value: _climbResult,
+                        decoration: const InputDecoration(
+                            labelText: 'Climb Result (爬升结果)'),
+                        items: _climbResults.map((String value) {
+                          String displayText;
+                          switch (value) {
+                            case 'success':
+                              displayText = '✅ 成功 (Success)';
+                              break;
+                            case 'failure':
+                              displayText = '❌ 失败 (Failure)';
+                              break;
+                            case 'hit_chain':
+                              displayText = '⛓️ 碰链子 (Hit Chain)';
+                              break;
+                            default:
+                              displayText = value;
+                          }
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(displayText),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _climbResult = newValue;
+                          });
+                        },
+                        validator: (value) => value == null
+                            ? 'Please select a climb result'
+                            : null,
                       ),
                     ],
                     // 时间戳编辑区域

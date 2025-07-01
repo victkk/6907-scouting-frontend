@@ -241,116 +241,151 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
       appBar: AppBar(
         title: const Text('Action Timeline'),
       ),
-      body: actions.isEmpty
-          ? const Center(child: Text('暂无记录的动作'))
-          : ListView.builder(
-              itemCount: actions.length,
-              itemBuilder: (context, index) {
-                final action = actions[index];
-                return ListTile(
-                  tileColor: action.type == 'give up'
-                      ? Colors.red.withOpacity(0.3)
-                      : null,
-                  leading: CircleAvatar(
-                    child: Text((index + 1).toString()),
-                  ),
-                  title: Text(_getActionTitle(action)),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: _getActionSubtitles(action),
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => EditActionPage(
-                                    initialTimestamp: action.timestamp)),
-                          );
-                        },
+      body: Stack(
+        children: [
+          actions.isEmpty
+              ? const Center(child: Text('暂无记录的动作'))
+              : ListView.builder(
+                  itemCount: actions.length,
+                  itemBuilder: (context, index) {
+                    final action = actions[index];
+                    return ListTile(
+                      tileColor: action.type == 'give up'
+                          ? Colors.red.withOpacity(0.3)
+                          : null,
+                      leading: CircleAvatar(
+                        child: Text((index + 1).toString()),
                       ),
-                      // 只有非start类型的action才显示编辑按钮
-                      if (action.type != 'start')
-                        IconButton(
-                          icon: const Icon(Icons.edit),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditActionPage(
-                                    action: action, index: index),
-                              ),
-                            );
-                          },
-                        ),
-                      // 只有非start类型的action才显示删除按钮
-                      if (action.type != 'start')
-                        IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () async {
-                            final confirmDelete = await showDialog<bool>(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text('确认删除'),
-                                  content: const Text('你确定要删除这个动作吗？'),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: const Text('取消'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop(false);
-                                      },
-                                    ),
-                                    TextButton(
-                                      child: const Text('删除'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop(true);
-                                      },
-                                    ),
-                                  ],
+                      title: Text(_getActionTitle(action)),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: _getActionSubtitles(action),
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => EditActionPage(
+                                        initialTimestamp: action.timestamp)),
+                              );
+                            },
+                          ),
+                          // 只有非start类型的action才显示编辑按钮
+                          if (action.type != 'start')
+                            IconButton(
+                              icon: const Icon(Icons.edit),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditActionPage(
+                                        action: action, index: index),
+                                  ),
                                 );
                               },
-                            );
-                            if (confirmDelete == true) {
-                              appStateProvider.deleteAction(index);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('动作已删除')),
-                              );
-                            }
-                          },
-                        ),
-                      // 如果是start类型，显示锁定图标表示不可编辑
-                      if (action.type == 'start')
-                        const Icon(
-                          Icons.lock,
-                          color: Colors.grey,
-                          size: 20,
-                        ),
-                    ],
-                  ),
-                  onLongPress: () {
-                    // TODO: Implement action deletion
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          content: Text(
-                              'Delete action ${index + 1} (not implemented yet)')),
+                            ),
+                          // 只有非start类型的action才显示删除按钮
+                          if (action.type != 'start')
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () async {
+                                final confirmDelete = await showDialog<bool>(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('确认删除'),
+                                      content: const Text('你确定要删除这个动作吗？'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: const Text('取消'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop(false);
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: const Text('删除'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop(true);
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                if (confirmDelete == true) {
+                                  appStateProvider.deleteAction(index);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('动作已删除')),
+                                  );
+                                }
+                              },
+                            ),
+                          // 如果是start类型，显示锁定图标表示不可编辑
+                          if (action.type == 'start')
+                            const Icon(
+                              Icons.lock,
+                              color: Colors.grey,
+                              size: 20,
+                            ),
+                        ],
+                      ),
+                      onLongPress: () {
+                        // TODO: Implement action deletion
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text(
+                                  'Delete action ${index + 1} (not implemented yet)')),
+                        );
+                      },
                     );
                   },
-                );
-              },
+                ),
+          // 提交记录按钮固定在屏幕1/2位置
+          if (actions.isNotEmpty)
+            Positioned(
+              top: MediaQuery.of(context).size.height * 0.5 - kToolbarHeight,
+              right: 16,
+              child: Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      spreadRadius: 2,
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ElevatedButton.icon(
+                  onPressed: () => _submitRecord(context),
+                  icon: const Icon(Icons.cloud_upload, color: Colors.white),
+                  label: const Text(
+                    '提交记录',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                ),
+              ),
             ),
-      floatingActionButton: actions.isNotEmpty
-          ? FloatingActionButton.extended(
-              onPressed: () => _submitRecord(context),
-              icon: const Icon(Icons.cloud_upload),
-              label: const Text('提交记录'),
-              backgroundColor: Colors.green,
-            )
-          : null,
+        ],
+      ),
     );
   }
 }

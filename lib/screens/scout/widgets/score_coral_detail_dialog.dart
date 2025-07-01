@@ -133,11 +133,11 @@ class _ScoreCoralDetailDialogState extends State<ScoreCoralDetailDialog>
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            Icons.settings,
-                            color: _getLevelColor(),
-                            size: 28,
-                          ),
+                          // Icon(
+                          //   Icons.settings,
+                          //   color: _getLevelColor(),
+                          //   size: 28,
+                          // ),
                           const SizedBox(width: 12),
                           Text(
                             '${widget.level} Score Coral 详细设置',
@@ -151,44 +151,53 @@ class _ScoreCoralDetailDialogState extends State<ScoreCoralDetailDialog>
                       ),
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 12),
 
-                    // 三个巨大的checkbox
-                    _buildGiantCheckbox(
-                      label: '叠筒',
-                      subtitle: 'Stacking',
-                      value: _stacking,
-                      onChanged: (value) => setState(() => _stacking = value),
-                      icon: Icons.layers,
-                      color: AppTheme.primaryColor,
-                      isSmallScreen: isSmallScreen,
+                    // 三个横向排列的checkbox
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildGiantCheckbox(
+                            label: '叠筒',
+                            subtitle: 'Stacking',
+                            value: _stacking,
+                            onChanged: (value) =>
+                                setState(() => _stacking = value),
+                            icon: Icons.layers,
+                            color: AppTheme.primaryColor,
+                            isSmallScreen: isSmallScreen,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _buildGiantCheckbox(
+                            label: '刮球',
+                            subtitle: 'Scraping',
+                            value: _scraping,
+                            onChanged: (value) =>
+                                setState(() => _scraping = value),
+                            icon: Icons.cleaning_services,
+                            color: AppTheme.warningColor,
+                            isSmallScreen: isSmallScreen,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _buildGiantCheckbox(
+                            label: '被防守',
+                            subtitle: 'Defended',
+                            value: _defended,
+                            onChanged: (value) =>
+                                setState(() => _defended = value),
+                            icon: Icons.shield,
+                            color: AppTheme.errorColor,
+                            isSmallScreen: isSmallScreen,
+                          ),
+                        ),
+                      ],
                     ),
 
-                    const SizedBox(height: 16),
-
-                    _buildGiantCheckbox(
-                      label: '刮球',
-                      subtitle: 'Scraping',
-                      value: _scraping,
-                      onChanged: (value) => setState(() => _scraping = value),
-                      icon: Icons.cleaning_services,
-                      color: AppTheme.warningColor,
-                      isSmallScreen: isSmallScreen,
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    _buildGiantCheckbox(
-                      label: '被防守',
-                      subtitle: 'Defended',
-                      value: _defended,
-                      onChanged: (value) => setState(() => _defended = value),
-                      icon: Icons.shield,
-                      color: AppTheme.errorColor,
-                      isSmallScreen: isSmallScreen,
-                    ),
-
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 12),
 
                     // 操作按钮
                     Row(
@@ -240,10 +249,10 @@ class _ScoreCoralDetailDialogState extends State<ScoreCoralDetailDialog>
         color: Colors.transparent,
         child: InkWell(
           onTap: () => onChanged(!value),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
           child: Container(
             width: double.infinity,
-            padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
+            padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -258,7 +267,7 @@ class _ScoreCoralDetailDialogState extends State<ScoreCoralDetailDialog>
                         AppTheme.surfacePrimary,
                       ],
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: value ? color : AppTheme.borderColor,
                 width: value ? 2 : 1,
@@ -279,74 +288,76 @@ class _ScoreCoralDetailDialogState extends State<ScoreCoralDetailDialog>
                       ),
                     ],
             ),
-            child: Row(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                // 超大图标
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: isSmallScreen ? 50 : 60,
-                  height: isSmallScreen ? 50 : 60,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color:
-                        value ? color : AppTheme.textDisabled.withOpacity(0.3),
-                    boxShadow: value
-                        ? [
-                            BoxShadow(
-                              color: color.withOpacity(0.4),
-                              blurRadius: 8,
-                              spreadRadius: 2,
-                            ),
-                          ]
-                        : null,
-                  ),
-                  child: Icon(
-                    icon,
-                    size: isSmallScreen ? 25 : 30,
-                    color: value ? Colors.white : AppTheme.textDisabled,
-                  ),
-                ),
+                // 图标
+                // AnimatedContainer(
+                //   duration: const Duration(milliseconds: 200),
+                //   width: isSmallScreen ? 40 : 50,
+                //   height: isSmallScreen ? 40 : 50,
+                //   decoration: BoxDecoration(
+                //     shape: BoxShape.circle,
+                //     color:
+                //         value ? color : AppTheme.textDisabled.withOpacity(0.3),
+                //     boxShadow: value
+                //         ? [
+                //             BoxShadow(
+                //               color: color.withOpacity(0.4),
+                //               blurRadius: 8,
+                //               spreadRadius: 2,
+                //             ),
+                //           ]
+                //         : null,
+                //   ),
+                //   child: Icon(
+                //     icon,
+                //     size: isSmallScreen ? 20 : 25,
+                //     color: value ? Colors.white : AppTheme.textDisabled,
+                //   ),
+                // ),
 
-                const SizedBox(width: 20),
+                const SizedBox(height: 8),
 
                 // 文字
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        label,
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 20 : 24,
-                          fontWeight: FontWeight.bold,
-                          color: value ? color : AppTheme.textPrimary,
-                        ),
+                Column(
+                  children: [
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: isSmallScreen ? 16 : 18,
+                        fontWeight: FontWeight.bold,
+                        color: value ? color : AppTheme.textPrimary,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        subtitle,
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 14 : 16,
-                          color: value
-                              ? color.withOpacity(0.8)
-                              : AppTheme.textSecondary,
-                        ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: isSmallScreen ? 12 : 14,
+                        color: value
+                            ? color.withOpacity(0.8)
+                            : AppTheme.textSecondary,
                       ),
-                    ],
-                  ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
 
-                // 超大复选框
+                const SizedBox(height: 8),
+
+                // 复选框
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  width: isSmallScreen ? 40 : 50,
-                  height: isSmallScreen ? 40 : 50,
+                  width: isSmallScreen ? 24 : 30,
+                  height: isSmallScreen ? 24 : 30,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: value ? color : Colors.transparent,
                     border: Border.all(
                       color: value ? color : AppTheme.borderColor,
-                      width: 3,
+                      width: 2,
                     ),
                     boxShadow: value
                         ? [
@@ -361,7 +372,7 @@ class _ScoreCoralDetailDialogState extends State<ScoreCoralDetailDialog>
                   child: value
                       ? Icon(
                           Icons.check,
-                          size: isSmallScreen ? 25 : 30,
+                          size: isSmallScreen ? 16 : 20,
                           color: Colors.white,
                         )
                       : null,
