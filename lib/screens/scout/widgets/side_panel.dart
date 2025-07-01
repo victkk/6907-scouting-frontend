@@ -6,6 +6,7 @@ import 'timer_display.dart';
 import 'package:provider/provider.dart';
 import '../../../theme/app_theme.dart';
 import 'package:horus/pages/action_timeline_page.dart';
+import 'score_coral_detail_dialog.dart';
 
 class SidePanel extends StatelessWidget {
   final bool isLeftPanel;
@@ -159,12 +160,12 @@ class SidePanel extends StatelessWidget {
             ),
           SizedBox(height: isSmallScreen ? 4 : 12), // 最小间距
 
-          // Go Barge按钮 - 在小屏幕下平分高度
+          // Give Up按钮 - 在小屏幕下平分高度
           if (isSmallScreen)
             Expanded(
               child: CustomButton(
-                id: 'Go Barge',
-                label: 'Go Barge',
+                id: 'Give Up',
+                label: 'Give Up',
                 height: double.infinity,
                 width: double.infinity, // 撑满宽度
                 icon: Icons.directions_boat,
@@ -174,8 +175,8 @@ class SidePanel extends StatelessWidget {
             )
           else
             CustomButton(
-              id: 'Go Barge',
-              label: 'Go Barge',
+              id: 'Give Up',
+              label: 'Give Up',
               height: availableHeight * 0.16,
               width: double.infinity, // 撑满宽度
               icon: Icons.directions_boat,
@@ -195,7 +196,7 @@ class SidePanel extends StatelessWidget {
                 icon: Icons.trending_up,
                 backgroundColor: AppTheme.successColor,
                 useGradient: true,
-                isEnabled: appState.goBarge,
+                isEnabled: appState.giveUp,
               ),
             )
           else
@@ -207,7 +208,7 @@ class SidePanel extends StatelessWidget {
               icon: Icons.trending_up,
               backgroundColor: AppTheme.successColor,
               useGradient: true,
-              isEnabled: appState.goBarge,
+              isEnabled: appState.giveUp,
             ),
         ],
       );
@@ -295,7 +296,7 @@ class SidePanel extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // L4-L1 按钮 - 减少间距
-          ..._buildLevelButtons(appState, isSmallScreen),
+          ..._buildLevelButtons(context, appState, isSmallScreen),
 
           SizedBox(height: isSmallScreen ? 8 : 16), // 减少间距
 
@@ -446,7 +447,8 @@ class SidePanel extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildLevelButtons(AppState appState, bool isSmallScreen) {
+  List<Widget> _buildLevelButtons(
+      BuildContext context, AppState appState, bool isSmallScreen) {
     final levels = ['L4', 'L3', 'L2', 'L1'];
     final colors = [
       AppTheme.errorColor, // L4 - 红色，最高级别
@@ -479,10 +481,30 @@ class SidePanel extends StatelessWidget {
             isEnabled: isEnabled,
             useGradient: true,
             icon: _getLevelIcon(level),
+            onLongPressCallback: isEnabled
+                ? () => _showScoreCoralDetailDialog(context, level)
+                : null,
           ),
         ),
       );
     }).toList();
+  }
+
+  void _showScoreCoralDetailDialog(BuildContext context, String level) {
+    final appState =
+        Provider.of<AppStateProvider>(context, listen: false).appState;
+    final timestamp = appState.getRelativeTimestamp();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return ScoreCoralDetailDialog(
+          level: level,
+          timestamp: timestamp,
+        );
+      },
+    );
   }
 
   IconData _getLevelIcon(String level) {

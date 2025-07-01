@@ -27,6 +27,9 @@ class _EditActionPageState extends State<EditActionPage> {
   int? _face;
   String? _faceDisplay; // 用于显示的面部选项
   bool? _success;
+  bool _stacking = false; // 叠筒
+  bool _scraping = false; // 刮球
+  bool _defended = false; // 被防守
   AppState? _appState; // 添加AppState引用
 
   // 定义所有可能的 action type (除了start，start只能通过特定按钮创建)
@@ -37,7 +40,7 @@ class _EditActionPageState extends State<EditActionPage> {
     'intake algae',
     'score coral',
     'score algae',
-    'go barge',
+    'give up',
     'climb up'
   ];
 
@@ -89,6 +92,9 @@ class _EditActionPageState extends State<EditActionPage> {
       _scoreAlgaeType = widget.action!.scoreAlgaeType;
       _face = widget.action!.face;
       _success = widget.action!.success;
+      _stacking = widget.action!.stacking;
+      _scraping = widget.action!.scraping;
+      _defended = widget.action!.defended;
       _faceDisplay = _face != null ? _faceDisplayMap[_face] : null;
     } else {
       _type = _actionTypes.first; // 默认选择第一个类型
@@ -116,6 +122,9 @@ class _EditActionPageState extends State<EditActionPage> {
         scoreAlgaeType: _scoreAlgaeType,
         face: _face,
         success: _success,
+        stacking: _stacking,
+        scraping: _scraping,
+        defended: _defended,
       );
 
       if (widget.action == null) {
@@ -175,6 +184,9 @@ class _EditActionPageState extends State<EditActionPage> {
                           _face = null;
                           _faceDisplay = null;
                           _success = null;
+                          _stacking = false;
+                          _scraping = false;
+                          _defended = false;
                         });
                       },
                     ),
@@ -261,6 +273,53 @@ class _EditActionPageState extends State<EditActionPage> {
                             _success = value;
                           });
                         },
+                      ),
+
+                      // Score coral 详细选项
+                      const Divider(),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 8.0),
+                        child: Text(
+                          'Score Coral 详细信息:',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      CheckboxListTile(
+                        title: const Text('🏗️ 叠筒 (Stacking)'),
+                        subtitle: const Text('是否进行了叠筒操作'),
+                        value: _stacking,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _stacking = value ?? false;
+                          });
+                        },
+                        activeColor: Colors.green,
+                      ),
+                      CheckboxListTile(
+                        title: const Text('🧹 刮球 (Scraping)'),
+                        subtitle: const Text('是否进行了刮球操作'),
+                        value: _scraping,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _scraping = value ?? false;
+                          });
+                        },
+                        activeColor: Colors.orange,
+                      ),
+                      CheckboxListTile(
+                        title: const Text('🛡️ 被防守 (Defended)'),
+                        subtitle: const Text('是否被对方机器人防守'),
+                        value: _defended,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _defended = value ?? false;
+                          });
+                        },
+                        activeColor: Colors.red,
                       ),
                     ],
                     if (_type == 'score algae') ...[

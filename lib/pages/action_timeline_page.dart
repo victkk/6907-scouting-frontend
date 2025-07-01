@@ -62,6 +62,24 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
     if (action.success != null) {
       subtitles.add(Text('成功: ${action.success}'));
     }
+
+    // 显示 score coral 的详细信息
+    if (action.type == 'score coral') {
+      if (action.stacking) {
+        subtitles.add(Text('🏗️ 叠筒',
+            style:
+                TextStyle(color: Colors.green, fontWeight: FontWeight.bold)));
+      }
+      if (action.scraping) {
+        subtitles.add(Text('🧹 刮球',
+            style:
+                TextStyle(color: Colors.orange, fontWeight: FontWeight.bold)));
+      }
+      if (action.defended) {
+        subtitles.add(Text('🛡️ 被防守',
+            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)));
+      }
+    }
     return subtitles;
   }
 

@@ -22,7 +22,7 @@ class AppState {
   bool hasCoral = true;
   bool hasAlgae = false;
   MatchRecord matchRecord = MatchRecord.empty();
-  bool goBarge = false;
+  bool giveUp = false;
   // state for screen display
   bool isStarted = false;
   bool isAutoSelected = false;
@@ -383,10 +383,10 @@ class AppState {
             AlgaeScoreTypes.processor, true,
             timestamp: relativeTimestamp));
         break;
-      case "Go Barge":
+      case "Give Up":
         matchRecord
-            .addAction(ScoutingAction.goBarge(timestamp: relativeTimestamp));
-        goBarge = !goBarge;
+            .addAction(ScoutingAction.giveUp(timestamp: relativeTimestamp));
+        giveUp = !giveUp;
         break;
       case "Climb Up":
         matchRecord

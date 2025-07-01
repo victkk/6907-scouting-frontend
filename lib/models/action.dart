@@ -11,6 +11,11 @@ class ScoutingAction {
   final int? face;
   final bool? success;
 
+  // score coral 类型的详细信息
+  final bool stacking; // 叠筒
+  final bool scraping; // 刮球
+  final bool defended; // 被防守
+
   ScoutingAction({
     required this.type,
     required this.timestamp,
@@ -20,6 +25,9 @@ class ScoutingAction {
     this.scoreAlgaeType,
     this.face,
     this.success,
+    this.stacking = false,
+    this.scraping = false,
+    this.defended = false,
   });
 
   /// 从JSON创建动作
@@ -33,6 +41,9 @@ class ScoutingAction {
       scoreAlgaeType: json['score algae type'],
       face: json['face'],
       success: json['success'],
+      stacking: json['stacking'] ?? false,
+      scraping: json['scraping'] ?? false,
+      defended: json['defended'] ?? false,
     );
   }
 
@@ -54,6 +65,9 @@ class ScoutingAction {
       if (scoreCoralType != null) data['score coral type'] = scoreCoralType;
       if (face != null) data['face'] = face;
       if (success != null) data['success'] = success;
+      data['stacking'] = stacking;
+      data['scraping'] = scraping;
+      data['defended'] = defended;
     }
     if (type == 'score algae') {
       if (scoreAlgaeType != null) data['score algae type'] = scoreAlgaeType;
@@ -73,6 +87,9 @@ class ScoutingAction {
     String? scoreAlgaeType,
     int? face,
     bool? success,
+    bool? stacking,
+    bool? scraping,
+    bool? defended,
   }) {
     return ScoutingAction(
       type: type ?? this.type,
@@ -83,6 +100,9 @@ class ScoutingAction {
       scoreAlgaeType: scoreAlgaeType ?? this.scoreAlgaeType,
       face: face ?? this.face,
       success: success ?? this.success,
+      stacking: stacking ?? this.stacking,
+      scraping: scraping ?? this.scraping,
+      defended: defended ?? this.defended,
     );
   }
 
@@ -125,13 +145,16 @@ class ScoutingAction {
 
   /// 工厂方法 - 创建得分珊瑚动作
   static ScoutingAction scoreCoral(String type, int face, bool success,
-      {int? timestamp}) {
+      {int? timestamp, bool? stacking, bool? scraping, bool? defended}) {
     return ScoutingAction(
       type: 'score coral',
       face: face,
       timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch,
       scoreCoralType: type,
       success: success,
+      stacking: stacking ?? false,
+      scraping: scraping ?? false,
+      defended: defended ?? false,
     );
   }
 
@@ -147,9 +170,9 @@ class ScoutingAction {
   }
 
   /// 工厂方法 - 创建前往驳船动作
-  static ScoutingAction goBarge({int? timestamp}) {
+  static ScoutingAction giveUp({int? timestamp}) {
     return ScoutingAction(
-        type: 'go barge',
+        type: 'give up',
         timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch);
   }
 

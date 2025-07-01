@@ -5,7 +5,7 @@ class ActionTypes {
   static const String intakeAlgae = 'intake algae';
   static const String scoreCoral = 'score coral';
   static const String scoreAlgae = 'score algae';
-  static const String goBarge = 'go barge';
+  static const String giveUp = 'give up';
   static const String climbUp = 'climb up';
 
   static const List<String> all = [
@@ -14,7 +14,7 @@ class ActionTypes {
     intakeAlgae,
     scoreCoral,
     scoreAlgae,
-    goBarge,
+    giveUp,
     climbUp
   ];
 }

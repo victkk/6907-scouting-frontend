@@ -9,6 +9,7 @@ class CustomButton extends StatefulWidget {
   final String label;
   final IconData? icon;
   final VoidCallback? onPressedCallback;
+  final VoidCallback? onLongPressCallback;
   final Color? backgroundColor;
   final Color? textColor;
   final Color? disabledBackgroundColor;
@@ -27,6 +28,7 @@ class CustomButton extends StatefulWidget {
     required this.label,
     this.icon,
     this.onPressedCallback,
+    this.onLongPressCallback,
     this.backgroundColor,
     this.textColor,
     this.disabledBackgroundColor,
@@ -259,6 +261,7 @@ class _CustomButtonState extends State<CustomButton>
                   // 主按钮容器 - 整个区域可点击
                   InkWell(
                     onTap: _handleTap,
+                    onLongPress: widget.onLongPressCallback,
                     onTapDown: (_) => _handleTapDown(),
                     onTapUp: (_) => _handleTapUp(),
                     onTapCancel: _handleTapUp,
