@@ -102,6 +102,17 @@ class MatchRecord {
     _sortActions(); // 添加后排序
   }
 
+  void defendedLastCoralOrAlgae() {
+    for (int i = actions.length - 1; i >= 0; i--) {
+      final action = actions[i];
+      if (action.type == ActionTypes.scoreCoral ||
+          action.type == ActionTypes.scoreAlgae) {
+        actions[i] = action.copyWith(defended: true);
+        return;
+      }
+    }
+  }
+
   /// 将最近的珊瑚或藻类得分动作标记为失败
   void failLastCoralOrAlgae() {
     // 从后向前遍历动作列表，寻找最近的得分动作

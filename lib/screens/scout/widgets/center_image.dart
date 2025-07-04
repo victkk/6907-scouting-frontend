@@ -5,6 +5,7 @@ import 'custom_button.dart';
 import 'package:provider/provider.dart';
 import 'hexagon_button.dart';
 import 'algae_score_menu_dialog.dart';
+import '../../../models/action_constants.dart';
 
 class CenterImage extends StatelessWidget {
   const CenterImage({super.key});
@@ -144,6 +145,7 @@ class CenterImage extends StatelessWidget {
     ];
   }
 
+  @Deprecated('Deprecated')
   void _showAlgaeScoreMenu(BuildContext context, AppState appState) {
     final timestamp = appState.getRelativeTimestamp();
 
@@ -183,76 +185,105 @@ class CenterImage extends StatelessWidget {
         child: CustomButton(
           id: 'Load Station Far',
           label: 'Load Station Far',
-          width: width * 0.40,
+          width: width * 0.30,
           height: height * 0.32,
           backgroundColor: Colors.blue[700],
         ),
       ),
       Positioned(
+        top: height * 0.10,
+        left: width * 0.875,
+        child: CustomButton(
+          id: AlgaeScoreTypes.net,
+          label: 'Net',
+          width: width * 0.1185,
+          height: height * 0.3514,
+          backgroundColor: Colors.cyan[700],
+          isEnabled: appState.hasAlgae,
+          // onLongPressCallback: appState.hasAlgae
+          //     ? () => _showAlgaeScoreMenu(context, appState)
+          //     : null,
+        ),
+      ),
+
+      Positioned(
         top: height * 0.00,
         left: width * 0.875,
         child: CustomButton(
-          id: 'Net',
-          label: 'Net',
+          id: AlgaeScoreTypes.shooting,
+          label: 'Shoot',
           width: width * 0.1185,
-          height: height * 0.4514,
-          backgroundColor: Colors.blue[700],
+          height: height * 0.1,
+          backgroundColor: Colors.cyan[700],
           isEnabled: appState.hasAlgae,
-          onLongPressCallback: appState.hasAlgae
-              ? () => _showAlgaeScoreMenu(context, appState)
-              : null,
+          // onLongPressCallback: appState.hasAlgae
+          //     ? () => _showAlgaeScoreMenu(context, appState)
+          //     : null,
         ),
       ),
       Positioned(
         top: height * 0.75,
         left: width * 0.6,
         child: CustomButton(
-          id: 'Processor',
+          id: AlgaeScoreTypes.processor,
           label: 'Processor',
-          width: width * 0.3,
+          width: width * 0.25,
           height: height * 0.23,
-          backgroundColor: Colors.blue[700],
+          backgroundColor: Colors.cyan[700],
+          isEnabled: appState.hasAlgae,
+        ),
+      ),
+
+      Positioned(
+        top: height * 0.75,
+        left: width * 0.85,
+        child: CustomButton(
+          id: AlgaeScoreTypes.tactical,
+          label: 'tactical Algae',
+          width: width * 0.15,
+          height: height * 0.23,
+          backgroundColor: Colors.cyan[700],
           isEnabled: appState.hasAlgae,
         ),
       ),
       // Ground Algae 按钮组 (前中后)
       Positioned(
         top: height * 0.00,
-        left: width * 0.536,
-        width: width * 0.3,
-        height: height * 0.3,
+        left: width * 0.336,
+        width: width * 0.5,
+        height: height * 0.2,
         child: Row(
           children: [
             // 前
             Expanded(
               child: CustomButton(
-                id: 'Ground Algae Front',
-                label: 'Ground Algae',
+                id: 'Ground Algae Back',
+                label: 'Algae Back',
                 width: double.infinity,
                 height: double.infinity,
-                backgroundColor: Colors.blue[700],
+                backgroundColor: Colors.cyan[700],
               ),
             ),
-            SizedBox(width: width * 0.005), // 小间距
+            const SizedBox(width: 2), // 小间距
             // 中
             Expanded(
               child: CustomButton(
                 id: 'Ground Algae Middle',
-                label: 'Ground Algae',
+                label: 'Algae Middle',
                 width: double.infinity,
                 height: double.infinity,
-                backgroundColor: Colors.blue[700],
+                backgroundColor: Colors.cyan[700],
               ),
             ),
-            SizedBox(width: width * 0.005), // 小间距
+            const SizedBox(width: 2), // 小间距
             // 后
             Expanded(
               child: CustomButton(
-                id: 'Ground Algae Back',
-                label: 'Ground Algae',
+                id: 'Ground Algae Front',
+                label: 'Algae Front',
                 width: double.infinity,
                 height: double.infinity,
-                backgroundColor: Colors.blue[700],
+                backgroundColor: Colors.cyan[700],
               ),
             ),
           ],
@@ -264,7 +295,7 @@ class CenterImage extends StatelessWidget {
         child: CustomButton(
           id: 'Load Station Near',
           label: 'Load Station Near',
-          width: width * 0.40,
+          width: width * 0.30,
           height: height * 0.32,
           backgroundColor: Colors.blue[700],
         ),
@@ -275,7 +306,19 @@ class CenterImage extends StatelessWidget {
         child: CustomButton(
           id: 'Ground Coral',
           label: 'Ground Coral',
-          width: width * 0.28,
+          width: width * 0.20,
+          height: height * 0.28,
+          backgroundColor: Colors.blue[700],
+        ),
+      ),
+
+      Positioned(
+        bottom: height * 0.36,
+        left: width * 0.22,
+        child: CustomButton(
+          id: 'Fixed Coral',
+          label: 'Fixed Coral',
+          width: width * 0.08,
           height: height * 0.28,
           backgroundColor: Colors.blue[700],
         ),

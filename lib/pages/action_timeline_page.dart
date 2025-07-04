@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:horus/providers/scout_state_provider.dart';
 import './edit_action_page.dart'; // 导入 EditActionPage
 import 'package:horus/models/action.dart';
+import 'package:horus/models/action_constants.dart';
 
 class ActionTimelinePage extends StatefulWidget {
   const ActionTimelinePage({super.key});
@@ -48,27 +49,24 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
       subtitles.add(Text('珊瑚类型: ${action.intakeCoralType}'));
     }
     if (action.intakeAlgaeType != null) {
-      String algaeTypeText = '藻类类型: ${action.intakeAlgaeType}';
-      // 如果是ground algae并且有来源信息，显示来源
-      if (action.intakeAlgaeType == 'ground' &&
-          action.groundAlgaeSource != null) {
-        String sourceText;
-        switch (action.groundAlgaeSource!) {
-          case 'front':
-            sourceText = '前';
-            break;
-          case 'middle':
-            sourceText = '中';
-            break;
-          case 'back':
-            sourceText = '后';
-            break;
-          default:
-            sourceText = action.groundAlgaeSource!;
-        }
-        algaeTypeText += ' (来源: $sourceText)';
+      subtitles.add(Text('藻类类型: ${action.intakeAlgaeType}'));
+    }
+    if (action.groundAlgaeSource != null) {
+      String sourceText;
+      switch (action.groundAlgaeSource!) {
+        case GroundAlgaeSources.front:
+          sourceText = '前';
+          break;
+        case GroundAlgaeSources.middle:
+          sourceText = '中';
+          break;
+        case GroundAlgaeSources.back:
+          sourceText = '后';
+          break;
+        default:
+          sourceText = action.groundAlgaeSource!;
       }
-      subtitles.add(Text(algaeTypeText));
+      subtitles.add(Text('藻类来源: $sourceText'));
     }
     if (action.scoreCoralType != null) {
       subtitles.add(Text('得分珊瑚类型: ${action.scoreCoralType}'));
@@ -76,16 +74,16 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
     if (action.scoreAlgaeType != null) {
       String algaeScoreText = '得分藻类类型: ';
       switch (action.scoreAlgaeType!) {
-        case 'net':
+        case AlgaeScoreTypes.net:
           algaeScoreText += 'Net (普通)';
           break;
-        case 'tactical':
+        case AlgaeScoreTypes.tactical:
           algaeScoreText += '战术 (Tactical)';
           break;
-        case 'shooting':
+        case AlgaeScoreTypes.shooting:
           algaeScoreText += '射球 (Shooting)';
           break;
-        case 'processor':
+        case AlgaeScoreTypes.processor:
           algaeScoreText += 'Processor';
           break;
         default:
@@ -93,13 +91,13 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
       }
       subtitles.add(Text(algaeScoreText,
           style: TextStyle(
-            color: action.scoreAlgaeType == 'tactical'
+            color: action.scoreAlgaeType == AlgaeScoreTypes.tactical
                 ? Colors.orange
-                : action.scoreAlgaeType == 'shooting'
+                : action.scoreAlgaeType == AlgaeScoreTypes.shooting
                     ? Colors.red
                     : null,
-            fontWeight: action.scoreAlgaeType == 'tactical' ||
-                    action.scoreAlgaeType == 'shooting'
+            fontWeight: action.scoreAlgaeType == AlgaeScoreTypes.tactical ||
+                    action.scoreAlgaeType == AlgaeScoreTypes.shooting
                 ? FontWeight.bold
                 : FontWeight.normal,
           )));
@@ -111,42 +109,30 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
       subtitles.add(Text('成功: ${action.success}'));
     }
 
-    // 显示 score coral 的详细信息
-    if (action.type == 'score coral') {
-      if (action.stacking) {
-        subtitles.add(Text('🏗️ 叠筒',
-            style:
-                TextStyle(color: Colors.green, fontWeight: FontWeight.bold)));
-      }
-      if (action.scraping) {
-        subtitles.add(Text('🧹 刮球',
-            style:
-                TextStyle(color: Colors.orange, fontWeight: FontWeight.bold)));
-      }
-      if (action.defended) {
-        subtitles.add(Text('🛡️ 被防守',
-            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)));
-      }
+    // 显示详细信息（不依赖action type）
+    if (action.defended == true) {
+      subtitles.add(Text('🛡️ 被防守',
+          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)));
     }
 
-    // 显示 climb up 的详细信息
-    if (action.type == 'climb up' && action.climbResult != null) {
+    // 显示爬升结果
+    if (action.climbResult != null) {
       String resultText;
       Color resultColor;
       String resultIcon;
 
       switch (action.climbResult!) {
-        case 'success':
+        case ClimbResults.success:
           resultText = '成功';
           resultColor = Colors.green;
           resultIcon = '✅';
           break;
-        case 'failure':
+        case ClimbResults.failure:
           resultText = '失败';
           resultColor = Colors.red;
           resultIcon = '❌';
           break;
-        case 'hit_chain':
+        case ClimbResults.hitChain:
           resultText = '碰链子';
           resultColor = Colors.orange;
           resultIcon = '⚠️';
@@ -250,7 +236,7 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
                   itemBuilder: (context, index) {
                     final action = actions[index];
                     return ListTile(
-                      tileColor: action.type == 'give up'
+                      tileColor: action.type == ActionTypes.giveUp
                           ? Colors.red.withOpacity(0.3)
                           : null,
                       leading: CircleAvatar(
@@ -276,7 +262,7 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
                             },
                           ),
                           // 只有非start类型的action才显示编辑按钮
-                          if (action.type != 'start')
+                          if (action.type != ActionTypes.start)
                             IconButton(
                               icon: const Icon(Icons.edit),
                               onPressed: () {
@@ -290,7 +276,7 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
                               },
                             ),
                           // 只有非start类型的action才显示删除按钮
-                          if (action.type != 'start')
+                          if (action.type != ActionTypes.start)
                             IconButton(
                               icon: const Icon(Icons.delete),
                               onPressed: () async {
@@ -326,7 +312,7 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
                               },
                             ),
                           // 如果是start类型，显示锁定图标表示不可编辑
-                          if (action.type == 'start')
+                          if (action.type == ActionTypes.start)
                             const Icon(
                               Icons.lock,
                               color: Colors.grey,

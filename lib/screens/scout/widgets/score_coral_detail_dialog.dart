@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../providers/scout_state_provider.dart';
 import '../../../theme/app_theme.dart';
 
+@Deprecated('Deprecated')
 class ScoreCoralDetailDialog extends StatefulWidget {
   final String level; // L1, L2, L3, L4
   final int timestamp; // 长按开始的时间戳
@@ -453,9 +454,9 @@ class _ScoreCoralDetailDialogState extends State<ScoreCoralDetailDialog>
       appState.faceSelected, // 使用当前选择的face
       true, // success为true，因为用户能进入详细设置说明操作成功
       timestamp: widget.timestamp, // 使用长按开始的时间戳
-      stacking: _stacking,
-      scraping: _scraping,
-      defended: _defended,
+      //   stacking: _stacking,
+      //   scraping: _scraping,
+      //   defended: _defended,
     );
 
     // 记录动作

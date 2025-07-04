@@ -274,7 +274,7 @@ class AppState {
   void addRecord(String buttonId) {
     // 获取当前的相对时间戳
     final relativeTimestamp = getRelativeTimestamp();
-
+    //TODO: change all to action type constants
     switch (buttonId) {
       case 'Start':
         // 添加start动作到matchRecord中
@@ -340,6 +340,14 @@ class AppState {
         hasCoral = false;
         unselectFace();
         break;
+      case 'Stack L1':
+        assert(hasCoral == true, "!score when no coral");
+        assert(getFaceSelected() > -1, "face not selected");
+        matchRecord.addAction(ScoutingAction.scoreCoral(
+            CoralScoreTypes.stackl1, faceSelected, true,
+            timestamp: relativeTimestamp));
+        hasCoral = false;
+        unselectFace();
       case 'Reef Algae':
         hasAlgae = true;
         matchRecord.addAction(ScoutingAction.intakeAlgae(AlgaeIntakeTypes.reef,
@@ -372,6 +380,11 @@ class AppState {
             CoralIntakeTypes.ground,
             timestamp: relativeTimestamp));
         break;
+      case "Fixed Coral":
+        hasCoral = true;
+        matchRecord.addAction(ScoutingAction.intakeCoral(CoralIntakeTypes.fixed,
+            timestamp: relativeTimestamp));
+        break;
       case "Load Station Far":
         hasCoral = true;
         matchRecord.addAction(ScoutingAction.intakeCoral(
@@ -384,32 +397,37 @@ class AppState {
             CoralIntakeTypes.loadStationB,
             timestamp: relativeTimestamp));
         break;
-      case "Net":
+      case AlgaeScoreTypes.net:
         assert(hasAlgae == true, "!score when no algae");
         hasAlgae = false;
         matchRecord.addAction(ScoutingAction.scoreAlgae(
             AlgaeScoreTypes.net, true,
             timestamp: relativeTimestamp));
         break;
-      case "Tactical":
+      case AlgaeScoreTypes.tactical:
         assert(hasAlgae == true, "!score when no algae");
         hasAlgae = false;
         matchRecord.addAction(ScoutingAction.scoreAlgae(
             AlgaeScoreTypes.tactical, true,
             timestamp: relativeTimestamp));
         break;
-      case "Shooting":
+      case AlgaeScoreTypes.shooting:
         assert(hasAlgae == true, "!score when no algae");
         hasAlgae = false;
         matchRecord.addAction(ScoutingAction.scoreAlgae(
             AlgaeScoreTypes.shooting, true,
             timestamp: relativeTimestamp));
         break;
-      case "Processor":
+      case AlgaeScoreTypes.processor:
         assert(hasAlgae == true, "!score when no algae");
         hasAlgae = false;
         matchRecord.addAction(ScoutingAction.scoreAlgae(
             AlgaeScoreTypes.processor, true,
+            timestamp: relativeTimestamp));
+        break;
+      case "Scrape Algae":
+        matchRecord.addAction(ScoutingAction.intakeAlgae(
+            AlgaeIntakeTypes.scrape,
             timestamp: relativeTimestamp));
         break;
       case "Give Up":
@@ -432,6 +450,10 @@ class AppState {
         break;
       case "Fail":
         matchRecord.failLastCoralOrAlgae();
+        break;
+
+      case "Defended":
+        matchRecord.defendedLastCoralOrAlgae();
         break;
       case "selectFace1":
         selectFace(1);

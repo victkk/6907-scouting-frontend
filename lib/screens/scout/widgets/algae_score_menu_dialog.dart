@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../providers/scout_state_provider.dart';
 import '../../../theme/app_theme.dart';
 
+@Deprecated('Deprecated')
 class AlgaeScoreMenuDialog extends StatefulWidget {
   final int timestamp; // 长按开始的时间戳
 
