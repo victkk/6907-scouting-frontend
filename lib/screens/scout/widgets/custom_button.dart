@@ -279,28 +279,17 @@ class _CustomButtonState extends State<CustomButton>
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: _isPressed
-                                    ? widget.isImportant
-                                        ? [
-                                            Color.lerp(AppTheme.accentColor,
-                                                Colors.black, 0.25)!,
-                                            Color.lerp(AppTheme.accentDark,
-                                                Colors.black, 0.25)!
-                                          ]
-                                        : [
-                                            Color.lerp(AppTheme.primaryColor,
-                                                Colors.black, 0.25)!,
-                                            Color.lerp(AppTheme.primaryDark,
-                                                Colors.black, 0.25)!
-                                          ]
-                                    : widget.isImportant
-                                        ? [
-                                            AppTheme.accentColor,
-                                            AppTheme.accentDark
-                                          ]
-                                        : [
-                                            AppTheme.primaryColor,
-                                            AppTheme.primaryDark
-                                          ],
+                                    ? [
+                                        Color.lerp(_getBackgroundColor(),
+                                            Colors.black, 0.25)!,
+                                        Color.lerp(_getBackgroundColor(),
+                                            Colors.black, 0.35)!
+                                      ]
+                                    : [
+                                        _getBackgroundColor(),
+                                        Color.lerp(_getBackgroundColor(),
+                                            Colors.black, 0.1)!
+                                      ],
                               )
                             : null,
                         color: widget.useGradient
