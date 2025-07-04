@@ -44,7 +44,7 @@ class _EditActionPageState extends State<EditActionPage> {
   // 定义所有可能的 intake algae type
   final List<String> _intakeAlgaeTypes = AlgaeIntakeTypes.all;
 
-  // 定义所有可能的 score coral type (过滤掉Stack L1)
+  // 定义所有可能的 score coral type
   final List<String> _scoreCoralTypes = CoralScoreTypes.all.toList();
 
   // 定义所有可能的 score algae type

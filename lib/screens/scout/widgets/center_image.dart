@@ -198,6 +198,7 @@ class CenterImage extends StatelessWidget {
           label: 'Net',
           width: width * 0.1185,
           height: height * 0.3514,
+          useGradient: true,
           backgroundColor: Colors.cyan[700],
           isEnabled: appState.hasAlgae,
           // onLongPressCallback: appState.hasAlgae
@@ -214,6 +215,8 @@ class CenterImage extends StatelessWidget {
           label: 'Shoot',
           width: width * 0.1185,
           height: height * 0.1,
+
+          useGradient: true,
           backgroundColor: Colors.cyan[700],
           isEnabled: appState.hasAlgae,
           // onLongPressCallback: appState.hasAlgae
@@ -228,6 +231,7 @@ class CenterImage extends StatelessWidget {
           id: AlgaeScoreTypes.processor,
           label: 'Processor',
           width: width * 0.25,
+          useGradient: true,
           height: height * 0.23,
           backgroundColor: Colors.cyan[700],
           isEnabled: appState.hasAlgae,
@@ -241,6 +245,7 @@ class CenterImage extends StatelessWidget {
           id: AlgaeScoreTypes.tactical,
           label: 'tactical Algae',
           width: width * 0.15,
+          useGradient: true,
           height: height * 0.23,
           backgroundColor: Colors.cyan[700],
           isEnabled: appState.hasAlgae,

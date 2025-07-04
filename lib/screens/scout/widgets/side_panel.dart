@@ -165,7 +165,7 @@ class SidePanel extends StatelessWidget {
                     useGradient: true,
                   ),
                 ),
-                SizedBox(width: 8), // 按钮之间的间距
+                SizedBox(width: 2), // 按钮之间的间距
                 Expanded(
                   flex: 1,
                   child: CustomButton(
@@ -325,6 +325,9 @@ class SidePanel extends StatelessWidget {
                       width: double.infinity, // 撑满宽度
                     ),
                   ),
+                  const SizedBox(
+                    width: 2,
+                  ),
                   Expanded(
                     flex: 1,
                     child: CustomButton(
@@ -459,7 +462,7 @@ class SidePanel extends StatelessWidget {
 
   List<Widget> _buildLevelButtons(
       BuildContext context, AppState appState, bool isSmallScreen) {
-    // 过滤掉Stack L1，只保留L1-L4，然后反转顺序
+    // 反转顺序
     final levels = CoralScoreTypes.all
         .toList()
         .reversed
