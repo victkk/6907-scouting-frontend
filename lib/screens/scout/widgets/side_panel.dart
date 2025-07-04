@@ -8,6 +8,7 @@ import '../../../theme/app_theme.dart';
 import 'package:horus/pages/action_timeline_page.dart';
 import 'score_coral_detail_dialog.dart';
 import 'climb_result_menu_dialog.dart';
+import '../../../models/action_constants.dart';
 
 class SidePanel extends StatelessWidget {
   final bool isLeftPanel;
@@ -134,100 +135,82 @@ class SidePanel extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // 顶部紧凑的计时器和时间线控制 - 在小屏幕下平分高度
-          if (isSmallScreen)
-            Expanded(
-              child: _buildCompactControls(context, isSmallScreen),
-            ),
-          if (isSmallScreen) SizedBox(height: 4), // 最小间距
+          Expanded(
+            flex: 1,
+            child: _buildCompactControls(context, isSmallScreen),
+          ),
+          const SizedBox(height: 4), // 最小间距
 
-          // 机器人状态显示 - 在小屏幕下平分高度
-          if (isSmallScreen)
-            Expanded(
-              child: _buildRobotStatusDisplay(
-                  appState, availableHeight, isSmallScreen),
-            )
-          else
-            _buildRobotStatusDisplay(appState, availableHeight, isSmallScreen),
-          SizedBox(height: isSmallScreen ? 4 : 12), // 最小间距
+          Expanded(
+            flex: 1,
+            child: _buildRobotStatusDisplay(
+                appState, availableHeight, isSmallScreen),
+          ),
+
+          const SizedBox(height: 4), // 最小间距
 
           // Fail按钮 - 在小屏幕下平分高度
-          if (isSmallScreen)
-            Expanded(
-              child: CustomButton(
-                id: 'Fail',
-                label: 'last coral/algae fail',
-                icon: Icons.error_outline,
-                height: double.infinity,
-                width: double.infinity, // 撑满宽度
-                backgroundColor: AppTheme.errorColor,
-                useGradient: true,
-              ),
-            )
-          else
-            CustomButton(
-              id: 'Fail',
-              label: 'last coral/algae fail',
-              icon: Icons.error_outline,
-              height: availableHeight * 0.32,
+          const Expanded(
+            flex: 1,
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: CustomButton(
+                    id: 'Fail',
+                    label: 'last coral/algae fail',
+                    icon: Icons.error_outline,
+                    height: double.infinity,
+                    backgroundColor: AppTheme.accentColor,
+                    useGradient: true,
+                  ),
+                ),
+                SizedBox(width: 8), // 按钮之间的间距
+                Expanded(
+                  flex: 1,
+                  child: CustomButton(
+                    id: 'Defended',
+                    label: 'last coral/algae defended',
+                    icon: Icons.error_outline,
+                    height: double.infinity,
+                    backgroundColor: AppTheme.accentColor,
+                    useGradient: true,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 4), // 最小间距
+          // Give Up按钮 - 在小屏幕下平分高度
+          const Expanded(
+            flex: 1,
+            child: CustomButton(
+              id: 'Give Up',
+              label: 'Give Up',
+              height: double.infinity,
               width: double.infinity, // 撑满宽度
+              icon: Icons.directions_boat,
               backgroundColor: AppTheme.errorColor,
               useGradient: true,
             ),
-          SizedBox(height: isSmallScreen ? 4 : 12), // 最小间距
+          ),
 
-          // Give Up按钮 - 在小屏幕下平分高度
-          if (isSmallScreen)
-            Expanded(
-              child: CustomButton(
-                id: 'Give Up',
-                label: 'Give Up',
-                height: double.infinity,
-                width: double.infinity, // 撑满宽度
-                icon: Icons.directions_boat,
-                backgroundColor: AppTheme.infoColor,
-                useGradient: true,
-              ),
-            )
-          else
-            CustomButton(
-              id: 'Give Up',
-              label: 'Give Up',
-              height: availableHeight * 0.16,
-              width: double.infinity, // 撑满宽度
-              icon: Icons.directions_boat,
-              backgroundColor: AppTheme.infoColor,
-              useGradient: true,
-            ),
-          SizedBox(height: isSmallScreen ? 4 : 12), // 最小间距
+          const SizedBox(height: 4), // 最小间距
 
           // Climb Up按钮 - 在小屏幕下平分高度
-          if (isSmallScreen)
-            Expanded(
-              child: CustomButton(
-                id: 'Climb Up',
-                label: 'Climb Up',
-                height: double.infinity,
-                width: double.infinity, // 撑满宽度
-                icon: Icons.trending_up,
-                backgroundColor: AppTheme.successColor,
-                useGradient: true,
-                isEnabled: appState.giveUp,
-                onLongPressCallback: () => _showClimbResultMenu(context),
-              ),
-            )
-          else
-            CustomButton(
+          Expanded(
+            flex: 1,
+            child: CustomButton(
               id: 'Climb Up',
               label: 'Climb Up',
-              height: availableHeight * 0.16,
+              height: double.infinity,
               width: double.infinity, // 撑满宽度
               icon: Icons.trending_up,
               backgroundColor: AppTheme.successColor,
               useGradient: true,
-              isEnabled: appState.giveUp,
               onLongPressCallback: () => _showClimbResultMenu(context),
             ),
+          ),
         ],
       );
     }
@@ -313,62 +296,71 @@ class SidePanel extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // L4-L1 按钮 - 减少间距
-          ..._buildLevelButtons(context, appState, isSmallScreen),
-
-          SizedBox(height: isSmallScreen ? 8 : 16), // 减少间距
-
-          // 底部：Reef Algae按钮和模式切换
-          Container(
-            padding: EdgeInsets.all(isSmallScreen ? 8 : 12), // 减少padding
-            decoration: BoxDecoration(
-              color: AppTheme.backgroundSecondary,
-              borderRadius:
-                  BorderRadius.circular(isSmallScreen ? 8 : 12), // 减少圆角
-              border: Border.all(
-                color: AppTheme.borderColor,
-                width: 1,
-              ),
-            ),
-            child: Row(
+          // L4-L1 按钮 - 占4/5高度
+          Expanded(
+            flex: 4,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Reef Algae 按钮
-                Expanded(
-                  flex: 2,
-                  child: CustomButton(
-                    id: 'Reef Algae',
-                    label: 'Reef Algae',
-                    icon: Icons.eco,
-                    backgroundColor: AppTheme.successColor,
-                    height: isSmallScreen ? 40 : 50, // 减少高度
-                    width: double.infinity, // 撑满宽度
-                  ),
-                ),
-
-                SizedBox(width: isSmallScreen ? 8 : 12), // 减少间距
-
-                // 模式切换
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'O/D',
-                      style: TextStyle(
-                        color: AppTheme.textPrimary,
-                        fontSize: isSmallScreen ? 10 : 12, // 减少字体
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Transform.scale(
-                      scale: isSmallScreen ? 0.8 : 1.0, // 小屏幕缩小开关
-                      child: Switch(
-                        value: isMode2,
-                        onChanged: (_) => appStateProvider.toggleMode(),
-                      ),
-                    ),
-                  ],
-                ),
+                ..._buildLevelButtons(context, appState, isSmallScreen),
               ],
+            ),
+          ),
+
+          // Reef Algae 按钮区域 - 占1/5高度
+          Expanded(
+            flex: 1,
+            child: Padding(
+              padding: EdgeInsets.only(top: isSmallScreen ? 8 : 16), // 顶部间距
+              child: Row(
+                children: [
+                  // Reef Algae 按钮
+                  Expanded(
+                    flex: 1,
+                    child: CustomButton(
+                      id: 'Reef Algae',
+                      label: 'Reef Algae',
+                      backgroundColor: Colors.cyan[700],
+                      height: double.infinity, // 撑满高度
+                      width: double.infinity, // 撑满宽度
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: CustomButton(
+                      id: 'Scrape Algae',
+                      label: 'Scrape Algae',
+                      backgroundColor: Colors.cyan[700],
+                      height: double.infinity, // 撑满高度
+                      width: double.infinity, // 撑满宽度
+                    ),
+                  ),
+
+                  SizedBox(width: isSmallScreen ? 8 : 12), // 减少间距
+
+                  // 模式切换
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'O/D',
+                        style: TextStyle(
+                          color: AppTheme.textPrimary,
+                          fontSize: isSmallScreen ? 10 : 12, // 减少字体
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Transform.scale(
+                        scale: isSmallScreen ? 0.8 : 1.0, // 小屏幕缩小开关
+                        child: Switch(
+                          value: isMode2,
+                          onChanged: (_) => appStateProvider.toggleMode(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -467,13 +459,11 @@ class SidePanel extends StatelessWidget {
 
   List<Widget> _buildLevelButtons(
       BuildContext context, AppState appState, bool isSmallScreen) {
-    final levels = ['L4', 'L3', 'L2', 'L1'];
-    final colors = [
-      AppTheme.errorColor, // L4 - 红色，最高级别
-      AppTheme.warningColor, // L3 - 橙色
-      AppTheme.infoColor, // L2 - 蓝色
-      AppTheme.successColor, // L1 - 绿色，最低级别
-    ];
+    // 过滤掉Stack L1，只保留L1-L4，然后反转顺序
+    final levels = CoralScoreTypes.all
+        .toList()
+        .reversed
+        .toList(); // 从action_constants获取，保持L4到L1的顺序
 
     // 提前计算isEnabled，避免在每个按钮中重复计算
     final isEnabled = appState.hasCoral && (appState.faceSelected > 0);
@@ -492,22 +482,22 @@ class SidePanel extends StatelessWidget {
             key: ValueKey('${level}_$isEnabled'), // 添加key提高重建效率
             id: level,
             label: level,
-            backgroundColor: colors[index],
             textColor: Colors.white,
             width: double.infinity, // 撑满宽度
             height: double.infinity, // 撑满高度
             isEnabled: isEnabled,
             useGradient: true,
             icon: _getLevelIcon(level),
-            onLongPressCallback: isEnabled
-                ? () => _showScoreCoralDetailDialog(context, level)
-                : null,
+            // onLongPressCallback: isEnabled
+            //     ? () => _showScoreCoralDetailDialog(context, level)
+            //     : null,
           ),
         ),
       );
     }).toList();
   }
 
+  @Deprecated('Deprecated')
   void _showScoreCoralDetailDialog(BuildContext context, String level) {
     final appState =
         Provider.of<AppStateProvider>(context, listen: false).appState;
@@ -581,7 +571,7 @@ class SidePanel extends StatelessWidget {
                   label: 'Algae',
                   hasItem: appState.hasAlgae,
                   icon: Icons.sports_soccer, // 更像球的图标
-                  activeColor: AppTheme.successColor, // 使用绿色，更符合藻类
+                  activeColor: Colors.cyan.shade700, // 使用绿色，更符合藻类
                   isSmallScreen: isSmallScreen,
                 ),
 
@@ -601,7 +591,7 @@ class SidePanel extends StatelessWidget {
                   label: 'Coral',
                   hasItem: appState.hasCoral,
                   icon: Icons.inventory, // 更清晰的桶状图标
-                  activeColor: AppTheme.errorColor, // 使用红色，更符合珊瑚
+                  activeColor: Colors.blue.shade700, // 使用红色，更符合珊瑚
                   isSmallScreen: isSmallScreen,
                 ),
               ],

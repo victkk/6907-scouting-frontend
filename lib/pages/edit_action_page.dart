@@ -29,42 +29,26 @@ class _EditActionPageState extends State<EditActionPage> {
   String? _faceDisplay; // 用于显示的面部选项
   bool? _success;
   String? _groundAlgaeSource; // Ground Algae 来源
-  bool _stacking = false; // 叠筒
-  bool _scraping = false; // 刮球
-  bool _defended = false; // 被防守
+  bool? _defended = false; // 被防守
   String? _climbResult; // 爬升结果
 
   AppState? _appState; // 添加AppState引用
 
   // 定义所有可能的 action type (除了start，start只能通过特定按钮创建)
-  final List<String> _actionTypes = [
-    'defense',
-    'foul',
-    'intake coral',
-    'intake algae',
-    'score coral',
-    'score algae',
-    'give up',
-    'climb up'
-  ];
+  final List<String> _actionTypes =
+      ActionTypes.all.where((type) => type != ActionTypes.start).toList();
 
   // 定义所有可能的 intake coral type
-  final List<String> _intakeCoralTypes = [
-    'ground',
-    'load station A',
-    'load station B'
-  ];
+  final List<String> _intakeCoralTypes = CoralIntakeTypes.all;
+
   // 定义所有可能的 intake algae type
-  final List<String> _intakeAlgaeTypes = ['ground', 'reef'];
-  // 定义所有可能的 score coral type
-  final List<String> _scoreCoralTypes = ['L1', 'L2', 'L3', 'L4'];
+  final List<String> _intakeAlgaeTypes = AlgaeIntakeTypes.all;
+
+  // 定义所有可能的 score coral type (过滤掉Stack L1)
+  final List<String> _scoreCoralTypes = CoralScoreTypes.all.toList();
+
   // 定义所有可能的 score algae type
-  final List<String> _scoreAlgaeTypes = [
-    'net',
-    'processor',
-    'tactical',
-    'shooting'
-  ];
+  final List<String> _scoreAlgaeTypes = AlgaeScoreTypes.all;
 
   // 定义 Ground Algae 来源选项
   final List<String> _groundAlgaeSources = GroundAlgaeSources.all;
@@ -108,8 +92,7 @@ class _EditActionPageState extends State<EditActionPage> {
       _face = widget.action!.face;
       _success = widget.action!.success;
       _groundAlgaeSource = widget.action!.groundAlgaeSource;
-      _stacking = widget.action!.stacking;
-      _scraping = widget.action!.scraping;
+
       _defended = widget.action!.defended;
       _climbResult = widget.action!.climbResult;
       _faceDisplay = _face != null ? _faceDisplayMap[_face] : null;
@@ -140,8 +123,6 @@ class _EditActionPageState extends State<EditActionPage> {
         face: _face,
         success: _success,
         groundAlgaeSource: _groundAlgaeSource,
-        stacking: _stacking,
-        scraping: _scraping,
         defended: _defended,
         climbResult: _climbResult,
       );
@@ -161,7 +142,7 @@ class _EditActionPageState extends State<EditActionPage> {
   Widget build(BuildContext context) {
     // 检查是否正在编辑start类型的action
     final bool isEditingStartAction =
-        widget.action != null && widget.action!.type == 'start';
+        widget.action != null && widget.action!.type == ActionTypes.start;
 
     return Scaffold(
       appBar: AppBar(
@@ -204,14 +185,12 @@ class _EditActionPageState extends State<EditActionPage> {
                           _faceDisplay = null;
                           _success = null;
                           _groundAlgaeSource = null;
-                          _stacking = false;
-                          _scraping = false;
                           _defended = false;
                           _climbResult = null;
                         });
                       },
                     ),
-                    if (_type == 'intake coral')
+                    if (_type == ActionTypes.intakeCoral)
                       DropdownButtonFormField<String>(
                         value: _intakeCoralType,
                         decoration: const InputDecoration(
@@ -230,7 +209,7 @@ class _EditActionPageState extends State<EditActionPage> {
                         validator: (value) =>
                             value == null ? 'Please select a type' : null,
                       ),
-                    if (_type == 'intake algae') ...[
+                    if (_type == ActionTypes.intakeAlgae) ...[
                       DropdownButtonFormField<String>(
                         value: _intakeAlgaeType,
                         decoration: const InputDecoration(
@@ -245,7 +224,7 @@ class _EditActionPageState extends State<EditActionPage> {
                           setState(() {
                             _intakeAlgaeType = newValue;
                             // 如果不是ground类型，清空来源选择
-                            if (newValue != 'ground') {
+                            if (newValue != AlgaeIntakeTypes.ground) {
                               _groundAlgaeSource = null;
                             }
                           });
@@ -255,7 +234,7 @@ class _EditActionPageState extends State<EditActionPage> {
                       ),
 
                       // 只有选择了ground类型时才显示来源选择
-                      if (_intakeAlgaeType == 'ground')
+                      if (_intakeAlgaeType == AlgaeIntakeTypes.ground)
                         DropdownButtonFormField<String>(
                           value: _groundAlgaeSource,
                           decoration: const InputDecoration(
@@ -289,7 +268,7 @@ class _EditActionPageState extends State<EditActionPage> {
                               value == null ? 'Please select a source' : null,
                         ),
                     ],
-                    if (_type == 'score coral') ...[
+                    if (_type == ActionTypes.scoreCoral) ...[
                       DropdownButtonFormField<String>(
                         value: _scoreCoralType,
                         decoration: const InputDecoration(
@@ -350,28 +329,6 @@ class _EditActionPageState extends State<EditActionPage> {
                         ),
                       ),
                       CheckboxListTile(
-                        title: const Text('🏗️ 叠筒 (Stacking)'),
-                        subtitle: const Text('是否进行了叠筒操作'),
-                        value: _stacking,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _stacking = value ?? false;
-                          });
-                        },
-                        activeColor: Colors.green,
-                      ),
-                      CheckboxListTile(
-                        title: const Text('🧹 刮球 (Scraping)'),
-                        subtitle: const Text('是否进行了刮球操作'),
-                        value: _scraping,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _scraping = value ?? false;
-                          });
-                        },
-                        activeColor: Colors.orange,
-                      ),
-                      CheckboxListTile(
                         title: const Text('🛡️ 被防守 (Defended)'),
                         subtitle: const Text('是否被对方机器人防守'),
                         value: _defended,
@@ -383,7 +340,7 @@ class _EditActionPageState extends State<EditActionPage> {
                         activeColor: Colors.red,
                       ),
                     ],
-                    if (_type == 'score algae') ...[
+                    if (_type == ActionTypes.scoreAlgae) ...[
                       DropdownButtonFormField<String>(
                         value: _scoreAlgaeType,
                         decoration: const InputDecoration(
@@ -391,16 +348,16 @@ class _EditActionPageState extends State<EditActionPage> {
                         items: _scoreAlgaeTypes.map((String value) {
                           String displayText;
                           switch (value) {
-                            case 'net':
+                            case AlgaeScoreTypes.net:
                               displayText = 'Net (普通)';
                               break;
-                            case 'tactical':
+                            case AlgaeScoreTypes.tactical:
                               displayText = '战术 (Tactical)';
                               break;
-                            case 'shooting':
+                            case AlgaeScoreTypes.shooting:
                               displayText = '射球 (Shooting)';
                               break;
-                            case 'processor':
+                            case AlgaeScoreTypes.processor:
                               displayText = 'Processor';
                               break;
                             default:
@@ -429,7 +386,7 @@ class _EditActionPageState extends State<EditActionPage> {
                         },
                       ),
                     ],
-                    if (_type == 'climb up') ...[
+                    if (_type == ActionTypes.climbUp) ...[
                       DropdownButtonFormField<String>(
                         value: _climbResult,
                         decoration: const InputDecoration(
@@ -437,13 +394,13 @@ class _EditActionPageState extends State<EditActionPage> {
                         items: _climbResults.map((String value) {
                           String displayText;
                           switch (value) {
-                            case 'success':
+                            case ClimbResults.success:
                               displayText = '✅ 成功 (Success)';
                               break;
-                            case 'failure':
+                            case ClimbResults.failure:
                               displayText = '❌ 失败 (Failure)';
                               break;
-                            case 'hit_chain':
+                            case ClimbResults.hitChain:
                               displayText = '⛓️ 碰链子 (Hit Chain)';
                               break;
                             default:
