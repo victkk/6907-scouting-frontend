@@ -14,10 +14,7 @@ class ScoutingAction {
   // ground algae 来源信息
   final String? groundAlgaeSource; // 前/中/后
 
-  // score coral 类型的详细信息
-  final bool stacking; // 叠筒
-  final bool scraping; // 刮球
-  final bool defended; // 被防守
+  final bool? defended; // 被防守
 
   // climb up 类型的详细信息
   final String? climbResult; // 爬升结果：成功/失败/碰链子
@@ -32,8 +29,6 @@ class ScoutingAction {
     this.face,
     this.success,
     this.groundAlgaeSource,
-    this.stacking = false,
-    this.scraping = false,
     this.defended = false,
     this.climbResult,
   });
@@ -50,8 +45,6 @@ class ScoutingAction {
       face: json['face'],
       success: json['success'],
       groundAlgaeSource: json['ground algae source'],
-      stacking: json['stacking'] ?? false,
-      scraping: json['scraping'] ?? false,
       defended: json['defended'] ?? false,
       climbResult: json['climb result'],
     );
@@ -64,30 +57,33 @@ class ScoutingAction {
       'timestamp': timestamp,
     };
 
-    // 根据类型添加其他字段
-    if (type == 'intake coral' && intakeCoralType != null) {
+    // 只要有该属性就加入，不管类型
+    if (intakeCoralType != null) {
       data['intake coral type'] = intakeCoralType;
     }
-    if (type == 'intake algae' && intakeAlgaeType != null) {
+    if (intakeAlgaeType != null) {
       data['intake algae type'] = intakeAlgaeType;
-      if (groundAlgaeSource != null) {
-        data['ground algae source'] = groundAlgaeSource;
-      }
     }
-    if (type == 'score coral') {
-      if (scoreCoralType != null) data['score coral type'] = scoreCoralType;
-      if (face != null) data['face'] = face;
-      if (success != null) data['success'] = success;
-      data['stacking'] = stacking;
-      data['scraping'] = scraping;
+    if (scoreCoralType != null) {
+      data['score coral type'] = scoreCoralType;
+    }
+    if (scoreAlgaeType != null) {
+      data['score algae type'] = scoreAlgaeType;
+    }
+    if (face != null) {
+      data['face'] = face;
+    }
+    if (success != null) {
+      data['success'] = success;
+    }
+    if (groundAlgaeSource != null) {
+      data['ground algae source'] = groundAlgaeSource;
+    }
+    if (defended != null) {
       data['defended'] = defended;
     }
-    if (type == 'score algae') {
-      if (scoreAlgaeType != null) data['score algae type'] = scoreAlgaeType;
-      if (success != null) data['success'] = success;
-    }
-    if (type == 'climb up') {
-      if (climbResult != null) data['climb result'] = climbResult;
+    if (climbResult != null) {
+      data['climb result'] = climbResult;
     }
 
     return data;
@@ -104,8 +100,6 @@ class ScoutingAction {
     int? face,
     bool? success,
     String? groundAlgaeSource,
-    bool? stacking,
-    bool? scraping,
     bool? defended,
     String? climbResult,
   }) {
@@ -119,8 +113,6 @@ class ScoutingAction {
       face: face ?? this.face,
       success: success ?? this.success,
       groundAlgaeSource: groundAlgaeSource ?? this.groundAlgaeSource,
-      stacking: stacking ?? this.stacking,
-      scraping: scraping ?? this.scraping,
       defended: defended ?? this.defended,
       climbResult: climbResult ?? this.climbResult,
     );
@@ -167,15 +159,13 @@ class ScoutingAction {
 
   /// 工厂方法 - 创建得分珊瑚动作
   static ScoutingAction scoreCoral(String type, int face, bool success,
-      {int? timestamp, bool? stacking, bool? scraping, bool? defended}) {
+      {int? timestamp, bool? defended}) {
     return ScoutingAction(
       type: 'score coral',
       face: face,
       timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch,
       scoreCoralType: type,
       success: success,
-      stacking: stacking ?? false,
-      scraping: scraping ?? false,
       defended: defended ?? false,
     );
   }

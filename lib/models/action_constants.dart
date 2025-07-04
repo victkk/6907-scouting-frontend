@@ -7,7 +7,8 @@ class ActionTypes {
   static const String scoreAlgae = 'score algae';
   static const String giveUp = 'give up';
   static const String climbUp = 'climb up';
-
+  static const String defense = 'defense';
+  static const String foul = 'foul';
   static const List<String> all = [
     start,
     intakeCoral,
@@ -15,7 +16,9 @@ class ActionTypes {
     scoreCoral,
     scoreAlgae,
     giveUp,
-    climbUp
+    climbUp,
+    defense,
+    foul
   ];
 }
 
@@ -24,15 +27,17 @@ class CoralIntakeTypes {
   static const String loadStationA = 'load station A';
   static const String loadStationB = 'load station B';
   static const String ground = 'ground';
+  static const String fixed = 'fixed';
 
-  static const List<String> all = [loadStationA, loadStationB, ground];
+  static const List<String> all = [loadStationA, loadStationB, ground, fixed];
 }
 
 /// 藻类摄取类型常量
 class AlgaeIntakeTypes {
   static const String ground = 'ground';
   static const String reef = 'reef';
-  static const List<String> all = [ground, reef];
+  static const String scrape = 'scrape';
+  static const List<String> all = [ground, reef, scrape];
 }
 
 /// Ground Algae 来源类型常量
@@ -45,11 +50,12 @@ class GroundAlgaeSources {
 
 /// 珊瑚得分类型常量
 class CoralScoreTypes {
+  static const String stackl1 = 'Stack L1';
   static const String l1 = 'L1';
   static const String l2 = 'L2';
   static const String l3 = 'L3';
   static const String l4 = 'L4';
-  static const List<String> all = [l1, l2, l3, l4];
+  static const List<String> all = [stackl1, l1, l2, l3, l4];
 }
 
 /// 藻类得分类型常量
