@@ -208,7 +208,7 @@ class SidePanel extends StatelessWidget {
               icon: Icons.trending_up,
               backgroundColor: AppTheme.successColor,
               useGradient: true,
-              onLongPressCallback: () => _showClimbResultMenu(context),
+              onPressedCallback: () => _showClimbResultMenu(context),
             ),
           ),
         ],
@@ -227,7 +227,7 @@ class SidePanel extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Foul按钮占据主要空间
-          Expanded(
+          const Expanded(
             flex: 4,
             child: CustomButton(
               id: 'Foul',
@@ -241,54 +241,45 @@ class SidePanel extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: isSmallScreen ? 8 : 16), // 减少间距
-
-          // 底部切换区域
-          Container(
-            padding: EdgeInsets.all(isSmallScreen ? 8 : 16), // 减少padding
-            decoration: BoxDecoration(
-              color: AppTheme.backgroundSecondary,
-              borderRadius:
-                  BorderRadius.circular(isSmallScreen ? 6 : 12), // 减少圆角
-              border: Border.all(
-                color: AppTheme.borderColor,
-                width: 1,
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+          const SizedBox(height: 4), // 减少间距
+          Expanded(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      '防守模式',
-                      style: TextStyle(
-                        color: AppTheme.textPrimary,
-                        fontSize: isSmallScreen ? 10 : 14, // 减少字体
-                        fontWeight: FontWeight.w600,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '防守模式',
+                          style: TextStyle(
+                            color: AppTheme.textPrimary,
+                            fontSize: isSmallScreen ? 10 : 14, // 减少字体
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          'Defense Mode',
+                          style: TextStyle(
+                            color: AppTheme.textSecondary,
+                            fontSize: isSmallScreen ? 8 : 12, // 减少字体
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      'Defense Mode',
-                      style: TextStyle(
-                        color: AppTheme.textSecondary,
-                        fontSize: isSmallScreen ? 8 : 12, // 减少字体
+                    Transform.scale(
+                      scale: isSmallScreen ? 0.8 : 1.0, // 小屏幕缩小开关
+                      child: Switch(
+                        value: isMode2,
+                        onChanged: (_) => appStateProvider.toggleMode(),
                       ),
-                    ),
+                    )
                   ],
                 ),
-                Transform.scale(
-                  scale: isSmallScreen ? 0.8 : 1.0, // 小屏幕缩小开关
-                  child: Switch(
-                    value: isMode2,
-                    onChanged: (_) => appStateProvider.toggleMode(),
-                  ),
-                ),
-              ],
-            ),
-          ),
+              ))
         ],
       );
     } else {
@@ -345,14 +336,6 @@ class SidePanel extends StatelessWidget {
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        'O/D',
-                        style: TextStyle(
-                          color: AppTheme.textPrimary,
-                          fontSize: isSmallScreen ? 10 : 12, // 减少字体
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
                       Transform.scale(
                         scale: isSmallScreen ? 0.8 : 1.0, // 小屏幕缩小开关
                         child: Switch(

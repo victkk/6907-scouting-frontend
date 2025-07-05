@@ -21,7 +21,6 @@ class CustomButton extends StatefulWidget {
   final bool isImportant;
   final bool enableHapticFeedback;
   final bool enableSoundFeedback;
-
   const CustomButton({
     super.key,
     required this.id,
@@ -191,7 +190,6 @@ class _CustomButtonState extends State<CustomButton>
 
   void _handleTap() {
     if (!widget.isEnabled) return;
-
     // 额外的触觉反馈
     if (widget.enableHapticFeedback) {
       HapticFeedback.mediumImpact();
@@ -199,10 +197,10 @@ class _CustomButtonState extends State<CustomButton>
 
     if (widget.onPressedCallback != null) {
       widget.onPressedCallback!();
+    } else {
+      Provider.of<AppStateProvider>(context, listen: false)
+          .recordButtonPress(widget.id);
     }
-    // 记录按钮按下的信息
-    Provider.of<AppStateProvider>(context, listen: false)
-        .recordButtonPress(widget.id);
   }
 
   @override

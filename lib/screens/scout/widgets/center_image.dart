@@ -191,13 +191,13 @@ class CenterImage extends StatelessWidget {
         ),
       ),
       Positioned(
-        top: height * 0.10,
+        top: height * 0.00,
         left: width * 0.875,
         child: CustomButton(
           id: AlgaeScoreTypes.net,
           label: 'Net',
           width: width * 0.1185,
-          height: height * 0.3514,
+          height: height * 0.4514,
           useGradient: true,
           backgroundColor: Colors.cyan[700],
           isEnabled: appState.hasAlgae,
@@ -206,15 +206,27 @@ class CenterImage extends StatelessWidget {
           //     : null,
         ),
       ),
+      Positioned(
+        top: 0.5 * height,
+        left: 0.875 * width,
+        child: CustomButton(
+          id: 'Ground Algae Front',
+          label: 'Steal Algae',
+          width: 0.1185 * width,
+          height: 0.23 * height,
+          useGradient: true,
+          backgroundColor: Colors.cyan[700],
+        ),
+      ),
 
       Positioned(
-        top: height * 0.00,
-        left: width * 0.875,
+        top: height * 0.2514,
+        left: width * 0.72,
         child: CustomButton(
           id: AlgaeScoreTypes.shooting,
           label: 'Shoot',
           width: width * 0.1185,
-          height: height * 0.1,
+          height: height * 0.23,
 
           useGradient: true,
           backgroundColor: Colors.cyan[700],
@@ -275,17 +287,6 @@ class CenterImage extends StatelessWidget {
               child: CustomButton(
                 id: 'Ground Algae Middle',
                 label: 'Algae Middle',
-                width: double.infinity,
-                height: double.infinity,
-                backgroundColor: Colors.cyan[700],
-              ),
-            ),
-            const SizedBox(width: 2), // 小间距
-            // 后
-            Expanded(
-              child: CustomButton(
-                id: 'Ground Algae Front',
-                label: 'Algae Front',
                 width: double.infinity,
                 height: double.infinity,
                 backgroundColor: Colors.cyan[700],
