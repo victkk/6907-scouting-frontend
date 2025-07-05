@@ -12,11 +12,21 @@ class HexagonalButtonGroup extends StatelessWidget {
   final int selectedIndex; // 当前选中的索引 (1-6, 0表示未选中)
   final Color selectedColor; // 选中时的颜色
   final Color unselectedColor; // 未选中时的颜色
+  /// 增加一个indexMap，用于将int映射到int
+  final Map<int, int> indexMap;
 
   const HexagonalButtonGroup({
     super.key,
     required this.size,
     required this.onPressed,
+    this.indexMap = const {
+      1: 1,
+      2: 2,
+      3: 3,
+      4: 4,
+      5: 5,
+      6: 6,
+    },
     this.children = const [null, null, null, null, null, null],
     this.borderWidth = 2.0,
     this.childPositionFactor = 0.5,
@@ -42,7 +52,7 @@ class HexagonalButtonGroup extends StatelessWidget {
     final sectionAngle = (index * 60 + 60) * (math.pi / 180); // 转换为弧度
 
     // 动态计算颜色：如果当前索引+1等于selectedIndex，则使用选中颜色，否则使用未选中颜色
-    final isSelected = (index + 1) == selectedIndex;
+    final isSelected = indexMap[index + 1] == selectedIndex;
     final buttonColor = isSelected ? selectedColor : unselectedColor;
     final borderColor =
         isSelected ? selectedColor : unselectedColor.withOpacity(0.5);
@@ -83,7 +93,7 @@ class HexagonalButtonGroup extends StatelessWidget {
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: onPressed[index],
+                  onTap: onPressed[indexMap[index + 1]! - 1],
                   child: Container(),
                 ),
               ),

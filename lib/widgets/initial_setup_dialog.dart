@@ -22,6 +22,8 @@ class _InitialSetupDialogState extends State<InitialSetupDialog>
 
   // 下拉菜单选择的值
   TournamentLevel? _selectedTournamentLevel;
+  // 镜像模式状态
+  bool _isMirrorMode = false;
 
   @override
   void initState() {
@@ -62,12 +64,13 @@ class _InitialSetupDialogState extends State<InitialSetupDialog>
     if (_formKey.currentState!.validate()) {
       final provider = Provider.of<AppStateProvider>(context, listen: false);
 
-      // 更新MatchRecord的基本信息
+      // 更新MatchRecord的基本信息（包括镜像模式）
       provider.updateMatchInfo(
         eventCode: 'SYOF',
         tournamentLevel: _selectedTournamentLevel!,
         matchNumber: int.parse(_matchNumberController.text),
         teamNo: int.parse(_teamNoController.text),
+        isMirrorMode: _isMirrorMode,
       );
 
       // 关闭对话框
@@ -209,6 +212,10 @@ class _InitialSetupDialogState extends State<InitialSetupDialog>
             return null;
           },
         ),
+        const SizedBox(height: 12),
+
+        // 镜像模式切换
+        _buildMirrorModeToggle(),
       ],
     );
   }
@@ -355,6 +362,46 @@ class _InitialSetupDialogState extends State<InitialSetupDialog>
               const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         ),
         validator: validator,
+      ),
+    );
+  }
+
+  Widget _buildMirrorModeToggle() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.backgroundSecondary,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.borderColor,
+          width: 1,
+        ),
+      ),
+      child: SwitchListTile(
+        title: Text(
+          '镜像模式 / Mirror Mode',
+          style: TextStyle(
+            color: AppTheme.textPrimary,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        subtitle: Text(
+          '开启后会交换左右图片并镜像按钮位置',
+          style: TextStyle(
+            color: AppTheme.textSecondary,
+            fontSize: 14,
+          ),
+        ),
+        value: _isMirrorMode,
+        onChanged: (bool value) {
+          setState(() {
+            _isMirrorMode = value;
+          });
+        },
+        activeColor: AppTheme.primaryColor,
+        inactiveThumbColor: AppTheme.textDisabled,
+        inactiveTrackColor: AppTheme.backgroundSecondary,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       ),
     );
   }

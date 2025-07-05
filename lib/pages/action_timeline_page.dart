@@ -15,12 +15,12 @@ class ActionTimelinePage extends StatefulWidget {
 class _ActionTimelinePageState extends State<ActionTimelinePage> {
   // 面部映射：数字值 -> 显示文本
   final Map<int, String> _faceDisplayMap = {
-    1: '正',
-    2: '左',
-    3: '网',
-    4: '背',
-    5: '洞',
-    6: '右',
+    3: '正',
+    4: '左',
+    5: '网',
+    6: '背',
+    1: '洞',
+    2: '右',
   };
 
   String _getActionTitle(ScoutingAction action) {

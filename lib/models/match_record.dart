@@ -29,6 +29,7 @@ class MatchRecord {
   int teamNo;
   String autoStartPosition;
   List<ScoutingAction> actions;
+  bool isMirrorMode;
 
   MatchRecord({
     this.season = 2025,
@@ -38,6 +39,7 @@ class MatchRecord {
     required this.teamNo,
     required this.autoStartPosition,
     required this.actions,
+    this.isMirrorMode = false,
   });
 
   void _sortActions() {
@@ -62,6 +64,7 @@ class MatchRecord {
       teamNo: json['teamNo'] ?? 0,
       autoStartPosition: json['autoStartPosition'] ?? '',
       actions: actionsList,
+      isMirrorMode: json['isMirrorMode'] ?? false,
     );
   }
 
@@ -75,6 +78,9 @@ class MatchRecord {
       'teamNo': teamNo,
       'autoStartPosition': autoStartPosition,
       'action': actions.map((action) => action.toJson()).toList(),
+      'isMirrorMode': isMirrorMode,
+      'exportTimestamp': DateTime.now().toIso8601String(),
+      'exportTimestampUtc': DateTime.now().toUtc().millisecondsSinceEpoch,
     };
   }
 
@@ -94,6 +100,7 @@ class MatchRecord {
         teamNo: 0,
         autoStartPosition: '',
         actions: [],
+        isMirrorMode: false,
       );
 
   /// 添加动作
@@ -154,6 +161,7 @@ class MatchRecord {
     int? teamNo,
     String? autoStartPosition,
     List<ScoutingAction>? actions,
+    bool? isMirrorMode,
   }) {
     return MatchRecord(
       season: season ?? this.season,
@@ -163,6 +171,7 @@ class MatchRecord {
       teamNo: teamNo ?? this.teamNo,
       autoStartPosition: autoStartPosition ?? this.autoStartPosition,
       actions: actions ?? List.from(this.actions),
+      isMirrorMode: isMirrorMode ?? this.isMirrorMode,
     );
   }
 }

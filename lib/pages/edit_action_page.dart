@@ -58,22 +58,22 @@ class _EditActionPageState extends State<EditActionPage> {
 
   // 面部选项映射：显示文本 -> 数字值
   final Map<String, int> _faceOptions = {
-    '正': 1,
-    '左': 2,
-    '网': 3,
-    '背': 4,
-    '洞': 5,
-    '右': 6,
+    '正': 3,
+    '左': 4,
+    '网': 5,
+    '背': 6,
+    '洞': 1,
+    '右': 2,
   };
 
   // 反向映射：数字值 -> 显示文本
   final Map<int, String> _faceDisplayMap = {
-    1: '正',
-    2: '左',
-    3: '网',
-    4: '背',
-    5: '洞',
-    6: '右',
+    3: '正',
+    4: '左',
+    5: '网',
+    6: '背',
+    1: '洞',
+    2: '右',
   };
 
   @override

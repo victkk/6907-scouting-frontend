@@ -57,6 +57,11 @@ class AppStateProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleMirrorMode() {
+    _appState.toggleMirrorMode();
+    notifyListeners();
+  }
+
   void recordButtonPress(String buttonId) {
     _appState.addRecord(buttonId);
     notifyListeners();
@@ -91,6 +96,7 @@ class AppStateProvider with ChangeNotifier {
     required TournamentLevel tournamentLevel,
     required int matchNumber,
     required int teamNo,
+    bool? isMirrorMode,
   }) {
     _appState.updateMatchInfo(
       season: season,
@@ -98,6 +104,7 @@ class AppStateProvider with ChangeNotifier {
       tournamentLevel: tournamentLevel,
       matchNumber: matchNumber,
       teamNo: teamNo,
+      isMirrorMode: isMirrorMode,
     );
     notifyListeners();
   }

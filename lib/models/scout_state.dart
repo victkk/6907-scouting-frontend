@@ -26,6 +26,8 @@ class AppState {
   // state for screen display
   bool isStarted = false;
   bool isAutoSelected = false;
+  // 镜像模式状态
+  bool isMirrorMode = false;
 
   // 添加游戏阶段状态
   GamePhase currentPhase = GamePhase.notStarted;
@@ -56,6 +58,10 @@ class AppState {
     return isDefensing;
   }
 
+  bool getIsMirrorMode() {
+    return isMirrorMode;
+  }
+
   // 获取当前游戏阶段
   GamePhase getCurrentPhase() {
     return currentPhase;
@@ -78,6 +84,10 @@ class AppState {
 
   void changeMode() {
     isDefensing = !isDefensing;
+  }
+
+  void toggleMirrorMode() {
+    isMirrorMode = !isMirrorMode;
   }
 
   void selectFace(int face) {
@@ -106,13 +116,20 @@ class AppState {
     required TournamentLevel tournamentLevel,
     required int matchNumber,
     required int teamNo,
+    bool? isMirrorMode,
   }) {
+    // 如果提供了镜像模式设置，更新内部状态
+    if (isMirrorMode != null) {
+      this.isMirrorMode = isMirrorMode;
+    }
+
     matchRecord = matchRecord.copyWith(
       season: season,
       eventCode: eventCode,
       tournamentLevel: tournamentLevel,
       matchNumber: matchNumber,
       teamNo: teamNo,
+      isMirrorMode: this.isMirrorMode,
     );
   }
 

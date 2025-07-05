@@ -14,27 +14,44 @@ class CenterImage extends StatelessWidget {
   static const double offenseImageAspectRatio = 1291.0 / 1110; // 示例值
   static const double defenseImageAspectRatio = 1291.0 / 1110; // 示例值
   static const double hexgon_button_size = 0.1;
+
+  // 计算镜像位置的帮助方法
+  double _getMirroredLeft(double originalLeft, double buttonWidth,
+      double totalWidth, bool isMirrorMode) {
+    if (!isMirrorMode) {
+      return originalLeft;
+    }
+    return totalWidth - originalLeft - buttonWidth;
+  }
+
   @override
   Widget build(BuildContext context) {
     final appStateProvider = Provider.of<AppStateProvider>(context);
     final appState = appStateProvider.appState;
 
-    // 根据模式选择不同的图片
-    final String imagePath = appState.getIsDefensing()
+    // 根据模式选择不同的图片，如果是镜像模式则交换图片
+    final bool shouldUseDefenseImage = appState.getIsMirrorMode()
+        ? !appState.getIsDefensing()
+        : appState.getIsDefensing();
+
+    final String imagePath = shouldUseDefenseImage
         ? 'assets/images/defense_background.png'
         : 'assets/images/offense_background.png';
 
     // 选择对应的长宽比
-    final double aspectRatio = appState.getIsDefensing()
+    final double aspectRatio = shouldUseDefenseImage
         ? defenseImageAspectRatio
         : offenseImageAspectRatio;
-    final Map<String, List<Widget> Function(double, double)>
+    final Map<String, List<Widget> Function(double, double, bool)>
         modeButtonBuilders = {
-      'offense': (width, height) => _buildMode1Buttons(
-          context, width, height, appStateProvider.selectFace, appState),
-      'defense': (width, height) => _buildMode2Buttons(width, height),
-      'auto': (width, height) => _buildAutoSelectButtons(width, height),
-      'start': (width, height) => _buildStartButtons(width, height),
+      'offense': (width, height, isMirrorMode) => _buildMode1Buttons(context,
+          width, height, appStateProvider.selectFace, appState, isMirrorMode),
+      'defense': (width, height, isMirrorMode) =>
+          _buildMode2Buttons(width, height, isMirrorMode),
+      'auto': (width, height, isMirrorMode) =>
+          _buildAutoSelectButtons(width, height, isMirrorMode),
+      'start': (width, height, isMirrorMode) =>
+          _buildStartButtons(width, height, isMirrorMode),
       // 可以添加更多模式
     };
     final String mode = !appState.isAutoSelected
@@ -74,19 +91,20 @@ class CenterImage extends StatelessWidget {
               ),
             ),
             child: Stack(
-              children:
-                  modeButtonBuilders[mode]!.call(actualWidth, actualHeight),
+              children: modeButtonBuilders[mode]!
+                  .call(actualWidth, actualHeight, appState.getIsMirrorMode()),
             )),
       );
     });
   }
 
-  List<Widget> _buildAutoSelectButtons(double width, double height) {
+  List<Widget> _buildAutoSelectButtons(
+      double width, double height, bool isMirrorMode) {
     return [
       Positioned(
         top: height * 0.01,
         bottom: height * 0.01,
-        left: width * 0.75,
+        left: _getMirroredLeft(width * 0.75, width * 0.23, width, isMirrorMode),
         width: width * 0.23,
         child: Column(
           children: [
@@ -160,11 +178,12 @@ class CenterImage extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildStartButtons(double width, double height) {
+  List<Widget> _buildStartButtons(
+      double width, double height, bool isMirrorMode) {
     return [
       Positioned(
         top: height * 0.0,
-        left: width * 0.0,
+        left: _getMirroredLeft(width * 0.0, width * 1, width, isMirrorMode),
         child: CustomButton(
           id: 'Start',
           label: 'Start',
@@ -176,12 +195,17 @@ class CenterImage extends StatelessWidget {
     ];
   }
 
-  List<Widget> _buildMode1Buttons(BuildContext context, double width,
-      double height, void Function(int) selectFace, AppState appState) {
+  List<Widget> _buildMode1Buttons(
+      BuildContext context,
+      double width,
+      double height,
+      void Function(int) selectFace,
+      AppState appState,
+      bool isMirrorMode) {
     return [
       Positioned(
         top: height * 0.02,
-        left: width * 0.02,
+        left: _getMirroredLeft(width * 0.02, width * 0.30, width, isMirrorMode),
         child: CustomButton(
           id: 'Load Station Far',
           label: 'Load Station Far',
@@ -192,7 +216,8 @@ class CenterImage extends StatelessWidget {
       ),
       Positioned(
         top: height * 0.00,
-        left: width * 0.875,
+        left: _getMirroredLeft(
+            width * 0.875, width * 0.1185, width, isMirrorMode),
         child: CustomButton(
           id: AlgaeScoreTypes.net,
           label: 'Net',
@@ -208,7 +233,8 @@ class CenterImage extends StatelessWidget {
       ),
       Positioned(
         top: 0.5 * height,
-        left: 0.875 * width,
+        left: _getMirroredLeft(
+            0.875 * width, 0.1185 * width, width, isMirrorMode),
         child: CustomButton(
           id: 'Ground Algae Front',
           label: 'Steal Algae',
@@ -221,7 +247,8 @@ class CenterImage extends StatelessWidget {
 
       Positioned(
         top: height * 0.2514,
-        left: width * 0.72,
+        left:
+            _getMirroredLeft(width * 0.72, width * 0.1185, width, isMirrorMode),
         child: CustomButton(
           id: AlgaeScoreTypes.shooting,
           label: 'Shoot',
@@ -238,7 +265,7 @@ class CenterImage extends StatelessWidget {
       ),
       Positioned(
         top: height * 0.75,
-        left: width * 0.6,
+        left: _getMirroredLeft(width * 0.6, width * 0.25, width, isMirrorMode),
         child: CustomButton(
           id: AlgaeScoreTypes.processor,
           label: 'Processor',
@@ -252,7 +279,7 @@ class CenterImage extends StatelessWidget {
 
       Positioned(
         top: height * 0.75,
-        left: width * 0.85,
+        left: _getMirroredLeft(width * 0.85, width * 0.15, width, isMirrorMode),
         child: CustomButton(
           id: AlgaeScoreTypes.tactical,
           label: 'tactical Algae',
@@ -266,38 +293,60 @@ class CenterImage extends StatelessWidget {
       // Ground Algae 按钮组 (前中后)
       Positioned(
         top: height * 0.00,
-        left: width * 0.336,
+        left: _getMirroredLeft(width * 0.336, width * 0.5, width, isMirrorMode),
         width: width * 0.5,
         height: height * 0.2,
         child: Row(
-          children: [
-            // 前
-            Expanded(
-              child: CustomButton(
-                id: 'Ground Algae Back',
-                label: 'Algae Back',
-                width: double.infinity,
-                height: double.infinity,
-                backgroundColor: Colors.cyan[700],
-              ),
-            ),
-            const SizedBox(width: 2), // 小间距
-            // 中
-            Expanded(
-              child: CustomButton(
-                id: 'Ground Algae Middle',
-                label: 'Algae Middle',
-                width: double.infinity,
-                height: double.infinity,
-                backgroundColor: Colors.cyan[700],
-              ),
-            ),
-          ],
+          children: isMirrorMode
+              ? [
+                  // 镜像模式时顺序调换
+                  Expanded(
+                    child: CustomButton(
+                      id: 'Ground Algae Middle',
+                      label: 'Algae Middle',
+                      width: double.infinity,
+                      height: double.infinity,
+                      backgroundColor: Colors.cyan[700],
+                    ),
+                  ),
+                  const SizedBox(width: 2), // 小间距
+                  Expanded(
+                    child: CustomButton(
+                      id: 'Ground Algae Back',
+                      label: 'Algae Back',
+                      width: double.infinity,
+                      height: double.infinity,
+                      backgroundColor: Colors.cyan[700],
+                    ),
+                  ),
+                ]
+              : [
+                  // 正常模式
+                  Expanded(
+                    child: CustomButton(
+                      id: 'Ground Algae Back',
+                      label: 'Algae Back',
+                      width: double.infinity,
+                      height: double.infinity,
+                      backgroundColor: Colors.cyan[700],
+                    ),
+                  ),
+                  const SizedBox(width: 2), // 小间距
+                  Expanded(
+                    child: CustomButton(
+                      id: 'Ground Algae Middle',
+                      label: 'Algae Middle',
+                      width: double.infinity,
+                      height: double.infinity,
+                      backgroundColor: Colors.cyan[700],
+                    ),
+                  ),
+                ],
         ),
       ),
       Positioned(
         top: height * 0.66,
-        left: width * 0.02,
+        left: _getMirroredLeft(width * 0.02, width * 0.30, width, isMirrorMode),
         child: CustomButton(
           id: 'Load Station Near',
           label: 'Load Station Near',
@@ -308,7 +357,7 @@ class CenterImage extends StatelessWidget {
       ),
       Positioned(
         bottom: height * 0.36,
-        left: width * 0.02,
+        left: _getMirroredLeft(width * 0.02, width * 0.20, width, isMirrorMode),
         child: CustomButton(
           id: 'Ground Coral',
           label: 'Ground Coral',
@@ -320,7 +369,7 @@ class CenterImage extends StatelessWidget {
 
       Positioned(
         bottom: height * 0.36,
-        left: width * 0.22,
+        left: _getMirroredLeft(width * 0.22, width * 0.08, width, isMirrorMode),
         child: CustomButton(
           id: 'Fixed Coral',
           label: 'Fixed Coral',
@@ -331,7 +380,8 @@ class CenterImage extends StatelessWidget {
       ),
       Positioned(
           top: height * 0.296,
-          left: width * 0.306,
+          left:
+              _getMirroredLeft(width * 0.306, width * 0.4, width, isMirrorMode),
           width: width * 0.4,
           height: width * 0.4,
           child: HexagonalButtonGroup(
@@ -349,19 +399,48 @@ class CenterImage extends StatelessWidget {
             ],
             childPositionFactor: 0.6, // 控制图标位置靠近外边缘
             borderWidth: 3.0, // 增加边框宽度使选中更明显
-            children: const [
-              Icon(Icons.looks_one, size: 20), // 颜色将由HexagonalButtonGroup动态设置
-              Icon(Icons.looks_two, size: 20),
-              Icon(Icons.looks_3, size: 20),
-              Icon(Icons.looks_4, size: 20),
-              Icon(Icons.looks_5, size: 20),
-              Icon(Icons.looks_6, size: 20),
-            ],
+            indexMap: isMirrorMode
+                ? {
+                    1: 4,
+                    2: 5,
+                    3: 6,
+                    4: 1,
+                    5: 2,
+                    6: 3,
+                  }
+                : {
+                    1: 1,
+                    2: 2,
+                    3: 3,
+                    4: 4,
+                    5: 5,
+                    6: 6,
+                  },
+            children: isMirrorMode
+                ? const [
+                    Icon(Icons.looks_one,
+                        size: 20), // 颜色将由HexagonalButtonGroup动态设置
+                    Icon(Icons.looks_6, size: 20),
+                    Icon(Icons.looks_5, size: 20),
+                    Icon(Icons.looks_4, size: 20),
+                    Icon(Icons.looks_3, size: 20),
+                    Icon(Icons.looks_two, size: 20),
+                  ]
+                : const [
+                    Icon(Icons.looks_one,
+                        size: 20), // 颜色将由HexagonalButtonGroup动态设置
+                    Icon(Icons.looks_two, size: 20),
+                    Icon(Icons.looks_3, size: 20),
+                    Icon(Icons.looks_4, size: 20),
+                    Icon(Icons.looks_5, size: 20),
+                    Icon(Icons.looks_6, size: 20),
+                  ],
           )),
     ];
   }
 
-  List<Widget> _buildMode2Buttons(double width, double height) {
+  List<Widget> _buildMode2Buttons(
+      double width, double height, bool isMirrorMode) {
     return [];
   }
 }
