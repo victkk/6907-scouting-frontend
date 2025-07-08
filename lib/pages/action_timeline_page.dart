@@ -320,14 +320,6 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
                             ),
                         ],
                       ),
-                      onLongPress: () {
-                        // TODO: Implement action deletion
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text(
-                                  'Delete action ${index + 1} (not implemented yet)')),
-                        );
-                      },
                     );
                   },
                 ),
