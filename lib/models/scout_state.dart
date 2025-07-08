@@ -468,7 +468,9 @@ class AppState {
       case "Fail":
         matchRecord.failLastCoralOrAlgae();
         break;
-
+      case "Star":
+        matchRecord.starLastAction();
+        break;
       case "Defended":
         matchRecord.defendedLastCoralOrAlgae();
         break;

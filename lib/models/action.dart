@@ -19,6 +19,8 @@ class ScoutingAction {
   // climb up 类型的详细信息
   final String? climbResult; // 爬升结果：成功/失败/碰链子
 
+  final bool? starred; // 标记这个动作记错了
+
   ScoutingAction({
     required this.type,
     required this.timestamp,
@@ -29,8 +31,9 @@ class ScoutingAction {
     this.face,
     this.success,
     this.groundAlgaeSource,
-    this.defended = false,
+    this.defended,
     this.climbResult,
+    this.starred,
   });
 
   /// 从JSON创建动作
@@ -47,6 +50,7 @@ class ScoutingAction {
       groundAlgaeSource: json['ground algae source'],
       defended: json['defended'] ?? false,
       climbResult: json['climb result'],
+      starred: json['starred'] ?? false,
     );
   }
 
@@ -102,6 +106,7 @@ class ScoutingAction {
     String? groundAlgaeSource,
     bool? defended,
     String? climbResult,
+    bool? starred,
   }) {
     return ScoutingAction(
       type: type ?? this.type,
@@ -115,51 +120,58 @@ class ScoutingAction {
       groundAlgaeSource: groundAlgaeSource ?? this.groundAlgaeSource,
       defended: defended ?? this.defended,
       climbResult: climbResult ?? this.climbResult,
+      starred: starred ?? this.starred,
     );
   }
 
   /// 工厂方法 - 创建开始动作
-  static ScoutingAction start({int? timestamp}) {
+  static ScoutingAction start({int? timestamp, bool? starred}) {
     return ScoutingAction(
         type: 'start',
-        timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch);
+        timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch,
+        starred: starred);
   }
 
-  static ScoutingAction defense({int? timestamp}) {
+  static ScoutingAction defense({int? timestamp, bool? starred}) {
     return ScoutingAction(
         type: 'defense',
-        timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch);
+        timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch,
+        starred: starred);
   }
 
-  static ScoutingAction foul({int? timestamp}) {
+  static ScoutingAction foul({int? timestamp, bool? starred}) {
     return ScoutingAction(
         type: 'foul',
-        timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch);
+        timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch,
+        starred: starred);
   }
 
   /// 工厂方法 - 创建摄取珊瑚动作
-  static ScoutingAction intakeCoral(String type, {int? timestamp}) {
+  static ScoutingAction intakeCoral(String type,
+      {int? timestamp, bool? starred}) {
     return ScoutingAction(
       type: 'intake coral',
       timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch,
       intakeCoralType: type,
+      starred: starred,
     );
   }
 
   /// 工厂方法 - 创建摄取藻类动作
   static ScoutingAction intakeAlgae(String type,
-      {int? timestamp, String? groundSource}) {
+      {int? timestamp, String? groundSource, bool? starred}) {
     return ScoutingAction(
       type: 'intake algae',
       timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch,
       intakeAlgaeType: type,
       groundAlgaeSource: groundSource,
+      starred: starred,
     );
   }
 
   /// 工厂方法 - 创建得分珊瑚动作
   static ScoutingAction scoreCoral(String type, int face, bool success,
-      {int? timestamp, bool? defended}) {
+      {int? timestamp, bool? defended, bool? starred}) {
     return ScoutingAction(
       type: 'score coral',
       face: face,
@@ -167,32 +179,37 @@ class ScoutingAction {
       scoreCoralType: type,
       success: success,
       defended: defended ?? false,
+      starred: starred,
     );
   }
 
   /// 工厂方法 - 创建得分藻类动作
   static ScoutingAction scoreAlgae(String type, bool success,
-      {int? timestamp}) {
+      {int? timestamp, bool? starred}) {
     return ScoutingAction(
       type: 'score algae',
       timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch,
       scoreAlgaeType: type,
       success: success,
+      starred: starred,
     );
   }
 
   /// 工厂方法 - 创建前往驳船动作
-  static ScoutingAction giveUp({int? timestamp}) {
+  static ScoutingAction giveUp({int? timestamp, bool? starred}) {
     return ScoutingAction(
         type: 'give up',
-        timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch);
+        timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch,
+        starred: starred);
   }
 
   /// 工厂方法 - 创建爬升动作
-  static ScoutingAction climbUp({int? timestamp, String? result}) {
+  static ScoutingAction climbUp(
+      {int? timestamp, String? result, bool? starred}) {
     return ScoutingAction(
         type: 'climb up',
         timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch,
-        climbResult: result);
+        climbResult: result,
+        starred: starred);
   }
 }

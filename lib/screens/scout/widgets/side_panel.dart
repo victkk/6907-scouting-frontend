@@ -158,7 +158,7 @@ class SidePanel extends StatelessWidget {
                   flex: 1,
                   child: CustomButton(
                     id: 'Fail',
-                    label: 'last coral/algae fail',
+                    label: 'failed',
                     icon: Icons.error_outline,
                     height: double.infinity,
                     backgroundColor: AppTheme.accentColor,
@@ -170,7 +170,7 @@ class SidePanel extends StatelessWidget {
                   flex: 1,
                   child: CustomButton(
                     id: 'Defended',
-                    label: 'last coral/algae defended',
+                    label: 'defended',
                     icon: Icons.error_outline,
                     height: double.infinity,
                     backgroundColor: AppTheme.accentColor,
@@ -200,15 +200,37 @@ class SidePanel extends StatelessWidget {
           // Climb Up按钮 - 在小屏幕下平分高度
           Expanded(
             flex: 1,
-            child: CustomButton(
-              id: 'Climb Up',
-              label: 'Climb Up',
-              height: double.infinity,
-              width: double.infinity, // 撑满宽度
-              icon: Icons.trending_up,
-              backgroundColor: AppTheme.successColor,
-              useGradient: true,
-              onPressedCallback: () => _showClimbResultMenu(context),
+            child: Row(
+              children: [
+                // Climb Up按钮
+                Expanded(
+                  flex: 3,
+                  child: CustomButton(
+                    id: 'Climb Up',
+                    label: 'Climb Up',
+                    height: double.infinity,
+                    icon: Icons.trending_up,
+                    backgroundColor: AppTheme.successColor,
+                    useGradient: true,
+                    onPressedCallback: () => _showClimbResultMenu(context),
+                  ),
+                ),
+
+                const SizedBox(width: 4), // 按钮之间的间距
+
+                // Star按钮
+                Expanded(
+                  flex: 1,
+                  child: CustomButton(
+                    id: 'Star',
+                    label: '★',
+                    height: double.infinity,
+                    icon: Icons.star,
+                    backgroundColor: Colors.orange,
+                    useGradient: true,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

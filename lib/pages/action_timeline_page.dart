@@ -45,6 +45,12 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
         style:
             const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)));
 
+    // 显示星标错误标记
+    if (action.starred == true) {
+      subtitles.add(Text('⭐ 标记为错误',
+          style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold)));
+    }
+
     if (action.intakeCoralType != null) {
       subtitles.add(Text('珊瑚类型: ${action.intakeCoralType}'));
     }
@@ -235,14 +241,35 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
                   itemCount: actions.length,
                   itemBuilder: (context, index) {
                     final action = actions[index];
+
+                    // 确定ListTile的背景颜色
+                    Color? tileColor;
+                    if (action.starred == true) {
+                      // 星标错误的动作用橙色背景
+                      tileColor = Colors.orange.withOpacity(0.2);
+                    } else if (action.type == ActionTypes.giveUp) {
+                      // GiveUp动作用红色背景
+                      tileColor = Colors.red.withOpacity(0.3);
+                    }
+
                     return ListTile(
-                      tileColor: action.type == ActionTypes.giveUp
-                          ? Colors.red.withOpacity(0.3)
-                          : null,
+                      tileColor: tileColor,
                       leading: CircleAvatar(
-                        child: Text((index + 1).toString()),
+                        backgroundColor:
+                            action.starred == true ? Colors.orange : null,
+                        child: action.starred == true
+                            ? const Icon(Icons.star,
+                                color: Colors.white, size: 20)
+                            : Text((index + 1).toString()),
                       ),
-                      title: Text(_getActionTitle(action)),
+                      title: Row(
+                        children: [
+                          Expanded(child: Text(_getActionTitle(action))),
+                          if (action.starred == true)
+                            const Icon(Icons.star,
+                                color: Colors.orange, size: 16),
+                        ],
+                      ),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: _getActionSubtitles(action),
@@ -250,6 +277,26 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          // 添加星标切换按钮
+                          if (action.type != ActionTypes.start)
+                            IconButton(
+                              icon: Icon(
+                                action.starred == true
+                                    ? Icons.star
+                                    : Icons.star_border,
+                                color: action.starred == true
+                                    ? Colors.orange
+                                    : Colors.grey,
+                              ),
+                              onPressed: () {
+                                // 切换星标状态
+                                appStateProvider.updateAction(
+                                  index,
+                                  action.copyWith(
+                                      starred: !(action.starred ?? false)),
+                                );
+                              },
+                            ),
                           IconButton(
                             icon: const Icon(Icons.add),
                             onPressed: () {

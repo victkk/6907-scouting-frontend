@@ -136,6 +136,13 @@ class MatchRecord {
     // 如果没有找到相关得分动作，不做任何操作
   }
 
+  void starLastAction() {
+    // 从后向前遍历动作列表，寻找最近的动作
+    final action = actions[actions.length - 1];
+    actions[actions.length - 1] = action.copyWith(starred: true);
+    return;
+  }
+
   /// 删除动作
   void removeAction(int index) {
     if (index >= 0 && index < actions.length) {
