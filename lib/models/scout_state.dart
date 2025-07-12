@@ -217,7 +217,7 @@ class AppState {
 
   // 提交记录（同时保存到本地和上传到服务器）
   Future<Map<String, dynamic>> submitMatchRecord({
-    String serverUrl = 'http://localhost:5000',
+    String serverUrl = 'http://120.77.56.240:5000/',
   }) async {
     try {
       // 1. 保存到本地
