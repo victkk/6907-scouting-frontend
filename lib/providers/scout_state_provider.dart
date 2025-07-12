@@ -111,14 +111,14 @@ class AppStateProvider with ChangeNotifier {
 
   // 提交比赛记录（保存到本地并上传到服务器）
   Future<Map<String, dynamic>> submitMatchRecord({
-    String serverUrl = 'http://120.77.56.240:5000/',
+    String serverUrl = 'http://120.77.56.240:5000',
   }) async {
     return await _appState.submitMatchRecord(serverUrl: serverUrl);
   }
 
   // 仅上传到服务器
   Future<Map<String, dynamic>> uploadMatchRecordToServer({
-    String serverUrl = 'http://120.77.56.240:5000/',
+    String serverUrl = 'http://120.77.56.240:5000',
   }) async {
     return await _appState.uploadMatchRecordToServer(serverUrl: serverUrl);
   }
