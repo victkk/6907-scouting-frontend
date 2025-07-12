@@ -170,7 +170,7 @@ class AppState {
 
   // 上传记录到远程服务器
   Future<Map<String, dynamic>> uploadMatchRecordToServer({
-    String serverUrl = 'http://localhost:5000', // 默认本地Flask服务器地址
+    String serverUrl = 'http://120.77.56.240:5000/', // 默认本地Flask服务器地址
   }) async {
     try {
       // 将比赛记录转换为 JSON
