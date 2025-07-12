@@ -301,6 +301,13 @@ class AppState {
         isStarted = true;
         _checkFirstAction();
         break;
+      case 'Teleop Start':
+        // 添加teleop start动作到matchRecord中
+        final teleopStartAction =
+            ScoutingAction.teleopStart(timestamp: relativeTimestamp);
+        matchRecord.addAction(teleopStartAction);
+
+        break;
       case 'Auto 1':
         isAutoSelected = true;
         matchRecord.autoStartPosition = AutoStartPositions.pos1;

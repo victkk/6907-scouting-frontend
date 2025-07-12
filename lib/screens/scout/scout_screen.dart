@@ -143,6 +143,7 @@ class LandscapeScreen extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 provider.startTeleopPhase();
+                provider.recordButtonPress('Teleop Start');
               },
               borderRadius: BorderRadius.circular(isSmallScreen ? 16 : 30),
               child: Center(

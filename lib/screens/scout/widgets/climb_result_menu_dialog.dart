@@ -101,45 +101,70 @@ class ClimbResultMenuDialog extends StatelessWidget {
                 const SizedBox(height: 24),
 
                 // 选项按钮
-                Row(
+                Column(
                   children: [
-                    // 成功
-                    Expanded(
-                      child: _buildOptionButton(
-                        label: '成功',
-                        subtitle: 'Success',
-                        icon: Icons.check_circle,
-                        color: AppTheme.successColor,
-                        onPressed: () =>
-                            _selectOption(ClimbResults.success, context),
-                        isSmallScreen: isSmallScreen,
-                      ),
+                    // 第一行：成功和失败
+                    Row(
+                      children: [
+                        // 成功
+                        Expanded(
+                          child: _buildOptionButton(
+                            label: '成功',
+                            subtitle: 'Success',
+                            icon: Icons.check_circle,
+                            color: AppTheme.successColor,
+                            onPressed: () =>
+                                _selectOption(ClimbResults.success, context),
+                            isSmallScreen: isSmallScreen,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        // 失败
+                        Expanded(
+                          child: _buildOptionButton(
+                            label: '失败',
+                            subtitle: 'Failure',
+                            icon: Icons.cancel,
+                            color: AppTheme.errorColor,
+                            onPressed: () =>
+                                _selectOption(ClimbResults.failure, context),
+                            isSmallScreen: isSmallScreen,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 12),
-                    // 失败
-                    Expanded(
-                      child: _buildOptionButton(
-                        label: '失败',
-                        subtitle: 'Failure',
-                        icon: Icons.cancel,
-                        color: AppTheme.errorColor,
-                        onPressed: () =>
-                            _selectOption(ClimbResults.failure, context),
-                        isSmallScreen: isSmallScreen,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    // 碰链子
-                    Expanded(
-                      child: _buildOptionButton(
-                        label: '碰链子',
-                        subtitle: 'Hit Chain',
-                        icon: Icons.warning,
-                        color: AppTheme.warningColor,
-                        onPressed: () =>
-                            _selectOption(ClimbResults.hitChain, context),
-                        isSmallScreen: isSmallScreen,
-                      ),
+
+                    const SizedBox(height: 12),
+
+                    // 第二行：碰链子和停靠
+                    Row(
+                      children: [
+                        // 碰链子
+                        Expanded(
+                          child: _buildOptionButton(
+                            label: '碰链子',
+                            subtitle: 'Hit Chain',
+                            icon: Icons.warning,
+                            color: AppTheme.warningColor,
+                            onPressed: () =>
+                                _selectOption(ClimbResults.hitChain, context),
+                            isSmallScreen: isSmallScreen,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        // 停靠
+                        Expanded(
+                          child: _buildOptionButton(
+                            label: '停靠',
+                            subtitle: 'Park',
+                            icon: Icons.local_parking,
+                            color: AppTheme.infoColor,
+                            onPressed: () =>
+                                _selectOption(ClimbResults.park, context),
+                            isSmallScreen: isSmallScreen,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

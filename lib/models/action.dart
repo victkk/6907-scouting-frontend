@@ -132,6 +132,14 @@ class ScoutingAction {
         starred: starred);
   }
 
+  /// 工厂方法 - 创建teleop开始动作
+  static ScoutingAction teleopStart({int? timestamp, bool? starred}) {
+    return ScoutingAction(
+        type: 'teleop start',
+        timestamp: timestamp ?? DateTime.now().millisecondsSinceEpoch,
+        starred: starred);
+  }
+
   static ScoutingAction defense({int? timestamp, bool? starred}) {
     return ScoutingAction(
         type: 'defense',

@@ -1,6 +1,7 @@
 /// 动作类型常量
 class ActionTypes {
   static const String start = 'start';
+  static const String teleopStart = 'teleop start';
   static const String intakeCoral = 'intake coral';
   static const String intakeAlgae = 'intake algae';
   static const String scoreCoral = 'score coral';
@@ -11,6 +12,7 @@ class ActionTypes {
   static const String foul = 'foul';
   static const List<String> all = [
     start,
+    teleopStart,
     intakeCoral,
     intakeAlgae,
     scoreCoral,
@@ -72,7 +74,8 @@ class ClimbResults {
   static const String success = 'success'; // 成功
   static const String failure = 'failure'; // 失败
   static const String hitChain = 'hit_chain'; // 碰链子
-  static const List<String> all = [success, failure, hitChain];
+  static const String park = 'park'; // 停靠+未尝试爬升
+  static const List<String> all = [success, failure, hitChain, park];
 }
 
 /// 自动阶段起始位置

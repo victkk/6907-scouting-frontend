@@ -278,7 +278,8 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           // 添加星标切换按钮
-                          if (action.type != ActionTypes.start)
+                          if (action.type != ActionTypes.start &&
+                              action.type != ActionTypes.teleopStart)
                             IconButton(
                               icon: Icon(
                                 action.starred == true
@@ -308,8 +309,9 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
                               );
                             },
                           ),
-                          // 只有非start类型的action才显示编辑按钮
-                          if (action.type != ActionTypes.start)
+                          // 只有非start和非teleop start类型的action才显示编辑按钮
+                          if (action.type != ActionTypes.start &&
+                              action.type != ActionTypes.teleopStart)
                             IconButton(
                               icon: const Icon(Icons.edit),
                               onPressed: () {
@@ -322,8 +324,9 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
                                 );
                               },
                             ),
-                          // 只有非start类型的action才显示删除按钮
-                          if (action.type != ActionTypes.start)
+                          // 只有非start和非teleop start类型的action才显示删除按钮
+                          if (action.type != ActionTypes.start &&
+                              action.type != ActionTypes.teleopStart)
                             IconButton(
                               icon: const Icon(Icons.delete),
                               onPressed: () async {
@@ -358,8 +361,9 @@ class _ActionTimelinePageState extends State<ActionTimelinePage> {
                                 }
                               },
                             ),
-                          // 如果是start类型，显示锁定图标表示不可编辑
-                          if (action.type == ActionTypes.start)
+                          // 如果是start或teleop start类型，显示锁定图标表示不可编辑
+                          if (action.type == ActionTypes.start ||
+                              action.type == ActionTypes.teleopStart)
                             const Icon(
                               Icons.lock,
                               color: Colors.grey,
