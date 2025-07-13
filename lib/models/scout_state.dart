@@ -3,7 +3,7 @@ import 'package:horus/models/action.dart';
 import 'package:horus/models/action_constants.dart';
 import 'dart:html' as html; // 导入 html 包用于 Web 平台
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'match_record.dart';
 
 // 添加游戏阶段枚举
@@ -173,6 +173,9 @@ class AppState {
     String serverUrl = 'http://120.77.56.240:5000', // 默认本地Flask服务器地址
   }) async {
     try {
+      // 创建 Dio 实例
+      final dio = Dio();
+
       // 将比赛记录转换为 JSON
       final jsonData = matchRecord.toJson();
 
@@ -180,16 +183,18 @@ class AppState {
       jsonData['uploadTimestamp'] = DateTime.now().millisecondsSinceEpoch;
 
       // 发送POST请求到服务器
-      final response = await http.post(
-        Uri.parse('$serverUrl/api/match-records'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(jsonData),
+      final response = await dio.post(
+        '$serverUrl/api/match-records',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+        data: jsonData,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final responseData = jsonDecode(response.body);
+        final responseData = response.data;
         print('Match record uploaded successfully: ${responseData['message']}');
         return {
           'success': true,
@@ -198,13 +203,20 @@ class AppState {
         };
       } else {
         print('Failed to upload match record: ${response.statusCode}');
-        print('Response body: ${response.body}');
+        print('Response body: ${response.data}');
         return {
           'success': false,
           'message': '上传失败: HTTP ${response.statusCode}',
-          'error': response.body,
+          'error': response.data,
         };
       }
+    } on DioException catch (e) {
+      print('Dio error uploading match record: $e');
+      return {
+        'success': false,
+        'message': '网络错误: ${e.message}',
+        'error': e.toString(),
+      };
     } catch (e) {
       print('Error uploading match record: $e');
       return {
