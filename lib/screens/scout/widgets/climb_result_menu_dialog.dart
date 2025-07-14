@@ -69,12 +69,6 @@ class ClimbResultMenuDialog extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.elevator,
-                        color: AppTheme.primaryColor,
-                        size: 28,
-                      ),
-                      const SizedBox(width: 12),
                       Text(
                         '爬升结果选择',
                         style: TextStyle(
@@ -111,7 +105,6 @@ class ClimbResultMenuDialog extends StatelessWidget {
                           child: _buildOptionButton(
                             label: '成功',
                             subtitle: 'Success',
-                            icon: Icons.check_circle,
                             color: AppTheme.successColor,
                             onPressed: () =>
                                 _selectOption(ClimbResults.success, context),
@@ -124,7 +117,6 @@ class ClimbResultMenuDialog extends StatelessWidget {
                           child: _buildOptionButton(
                             label: '失败',
                             subtitle: 'Failure',
-                            icon: Icons.cancel,
                             color: AppTheme.errorColor,
                             onPressed: () =>
                                 _selectOption(ClimbResults.failure, context),
@@ -144,7 +136,6 @@ class ClimbResultMenuDialog extends StatelessWidget {
                           child: _buildOptionButton(
                             label: '碰链子',
                             subtitle: 'Hit Chain',
-                            icon: Icons.warning,
                             color: AppTheme.warningColor,
                             onPressed: () =>
                                 _selectOption(ClimbResults.hitChain, context),
@@ -157,7 +148,6 @@ class ClimbResultMenuDialog extends StatelessWidget {
                           child: _buildOptionButton(
                             label: '停靠',
                             subtitle: 'Park',
-                            icon: Icons.local_parking,
                             color: AppTheme.infoColor,
                             onPressed: () =>
                                 _selectOption(ClimbResults.park, context),
@@ -176,7 +166,6 @@ class ClimbResultMenuDialog extends StatelessWidget {
                   width: double.infinity,
                   child: _buildActionButton(
                     label: '取消',
-                    icon: Icons.cancel,
                     color: AppTheme.textSecondary,
                     onPressed: () => Navigator.of(context).pop(),
                     isSmallScreen: isSmallScreen,
@@ -193,7 +182,6 @@ class ClimbResultMenuDialog extends StatelessWidget {
   Widget _buildOptionButton({
     required String label,
     required String subtitle,
-    required IconData icon,
     required Color color,
     required VoidCallback onPressed,
     required bool isSmallScreen,
@@ -222,30 +210,6 @@ class ClimbResultMenuDialog extends StatelessWidget {
           ),
           child: Column(
             children: [
-              // 图标
-              Container(
-                width: isSmallScreen ? 40 : 50,
-                height: isSmallScreen ? 40 : 50,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: color,
-                  boxShadow: [
-                    BoxShadow(
-                      color: color.withOpacity(0.4),
-                      blurRadius: 8,
-                      spreadRadius: 2,
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  icon,
-                  size: isSmallScreen ? 20 : 25,
-                  color: Colors.white,
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
               // 文字
               Text(
                 label,
@@ -274,7 +238,6 @@ class ClimbResultMenuDialog extends StatelessWidget {
 
   Widget _buildActionButton({
     required String label,
-    required IconData icon,
     required Color color,
     required VoidCallback onPressed,
     required bool isSmallScreen,
@@ -308,12 +271,6 @@ class ClimbResultMenuDialog extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                color: Colors.white,
-                size: isSmallScreen ? 18 : 20,
-              ),
-              const SizedBox(width: 8),
               Text(
                 label,
                 style: TextStyle(
