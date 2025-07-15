@@ -56,30 +56,30 @@ class ClimbResultMenuDialog extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // 标题
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppTheme.primaryColor.withOpacity(0.3),
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '爬升结果选择',
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 18 : 22,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.primaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // Container(
+                //   padding: const EdgeInsets.all(16),
+                //   decoration: BoxDecoration(
+                //     color: AppTheme.primaryColor.withOpacity(0.1),
+                //     borderRadius: BorderRadius.circular(12),
+                //     border: Border.all(
+                //       color: AppTheme.primaryColor.withOpacity(0.3),
+                //       width: 1,
+                //     ),
+                //   ),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       Text(
+                //         '爬升结果选择',
+                //         style: TextStyle(
+                //           fontSize: isSmallScreen ? 18 : 22,
+                //           fontWeight: FontWeight.bold,
+                //           color: AppTheme.primaryColor,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
 
                 const SizedBox(height: 24),
 
